@@ -3,7 +3,7 @@ package com.gicproject.salamattendanceapp.di
 import android.app.Application
 import android.content.Context
 import androidx.room.Room
-import com.gicproject.emojisurveyapp.data.remote.MyApi
+import com.gicproject.salamattendanceapp.data.remote.MyApi
 import com.gicproject.salamattendanceapp.common.Constants
 import com.gicproject.salamattendanceapp.data.data_source.MyDatabase
 import com.gicproject.salamattendanceapp.data.repository.DataStoreRepositoryImpl
