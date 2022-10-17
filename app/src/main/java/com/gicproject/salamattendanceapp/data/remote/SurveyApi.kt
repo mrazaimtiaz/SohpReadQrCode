@@ -1,4 +1,4 @@
-package com.gicproject.emojisurveyapp.data.remote
+package com.gicproject.salamattendanceapp.data.remote
 
 import com.gicproject.salamattendanceapp.data.remote.dto.*
 import retrofit2.http.GET

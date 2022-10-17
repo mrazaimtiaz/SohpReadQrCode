@@ -3,7 +3,7 @@ package com.gicproject.salamattendanceapp.data.repository
 import com.gicproject.salamattendanceapp.data.remote.dto.*
 
 
-import com.gicproject.emojisurveyapp.data.remote.MyApi
+import com.gicproject.salamattendanceapp.data.remote.MyApi
 import com.gicproject.emojisurveyapp.domain.model.CustomerInput
 import com.gicproject.salamattendanceapp.data.data_source.MyDao
 import com.gicproject.salamattendanceapp.domain.repository.MyRepository
