@@ -2,9 +2,19 @@ package com.gicproject.salamattendanceapp.domain.repository
 
 import com.gicproject.emojisurveyapp.domain.model.CustomerInput
 import com.gicproject.salamattendanceapp.data.remote.dto.*
+import com.gicproject.salamattendanceapp.domain.model.CheckQrCodeSend
+import com.gicproject.salamattendanceapp.domain.model.CheckSend
+import com.gicproject.salamattendanceapp.domain.model.ResultClass
 import kotlinx.coroutines.flow.Flow
+import retrofit2.http.Body
+import retrofit2.http.GET
 
 interface MyRepository {
+
+    suspend fun checkQrCode(checkQrCodeSend: CheckQrCodeSend): List<ResultClass>?
+
+    suspend fun checkSend(checkSend: CheckSend,isCheckIn: Boolean): List<ResultClass>?
+
     suspend fun getLocations(): List<LocationDto>?
 
     suspend fun getClinics(id: String): List<ClinicDto>?

@@ -1,10 +1,32 @@
 package com.gicproject.salamattendanceapp.data.remote
 
 import com.gicproject.salamattendanceapp.data.remote.dto.*
+import com.gicproject.salamattendanceapp.domain.model.CheckQrCodeSend
+import com.gicproject.salamattendanceapp.domain.model.CheckSend
+import com.gicproject.salamattendanceapp.domain.model.ResultClass
+import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface MyApi {
+
+    @POST("api/CheckQrCode")
+    suspend fun checkQrCode(
+        @Body checkQrCodeSendModel: CheckQrCodeSend
+    ): List<ResultClass>?
+
+    @POST("api/CheckIn")
+    suspend fun checkIn(
+        @Body checkSend: CheckSend
+    ): List<ResultClass>?
+
+    @POST("api/CheckOut")
+    suspend fun checkOut(
+        @Body checkSend: CheckSend
+    ): List<ResultClass>?
 
     @GET("api/getlocation")
     suspend fun getLocations(

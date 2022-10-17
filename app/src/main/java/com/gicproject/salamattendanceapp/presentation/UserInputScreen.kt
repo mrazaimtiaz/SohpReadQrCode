@@ -22,7 +22,6 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -38,26 +37,17 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import com.airbnb.lottie.compose.LottieAnimation
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.rememberLottieComposition
 import com.gicproject.salamattendanceapp.R
 import com.gicproject.salamattendanceapp.Screen
 import com.gicproject.salamattendanceapp.common.Constants
 import com.gicproject.salamattendanceapp.data.remote.dto.EmployeeDto
-import com.gicproject.salamattendanceapp.ui.theme.darkGreen
 import kotlinx.coroutines.delay
 import java.io.File
-import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.Executor
 
@@ -123,6 +113,9 @@ fun UserInputScreen(
 
     if (state.success.isNotBlank()) {
         LaunchedEffect(Unit) {
+            navController.currentBackStackEntry?.savedStateHandle?.set(
+                Constants.STATE_SUCCESS_MSG, state.success
+            )
             navController.currentBackStackEntry?.savedStateHandle?.set(
                 Constants.STATE_EMPLOYEE_INFO, employeeDto
             )
@@ -242,11 +235,11 @@ fun UserInputScreen(
                                         modifier = Modifier.padding(20.dp)
                                     ) {
                                         Spacer(Modifier.height(10.dp))
-                                        TextInfo("Employee ID: ", employeeDto?.ID?.toString() ?: "")
+                                        TextInfo("Employee ID: ", employeeDto?.iD?.toString() ?: "")
                                         Spacer(Modifier.height(10.dp))
-                                        TextInfo("Employee Name: ", employeeDto?.Name ?: "")
+                                        TextInfo("Employee Name: ", employeeDto?.fullNameEn ?: "")
                                         Spacer(Modifier.height(10.dp))
-                                        TextInfo("Designation: ", employeeDto?.designation ?: "")
+                                        TextInfo("Designation: ", employeeDto?.departmentEn ?: "")
                                         Spacer(Modifier.height(10.dp))
                                     }
                                     Column(
@@ -264,6 +257,7 @@ fun UserInputScreen(
                             state.error,
                             Toast.LENGTH_LONG
                         ).show()
+                        viewModel.emptyToast()
                         navController.popBackStack(route = Screen.MainScreen.route, inclusive = false)
                     }
 
@@ -292,7 +286,7 @@ fun UserInputScreen(
                                     viewModel.setShowCamera(false)
                                     viewModel.setPhotoUri(it)
                                     viewModel.setShowPhoto(true)
-                                    viewModel.showEmployeeInfoScreen(true,context)
+                                    viewModel.showEmployeeInfoScreen(true,context,employeeDto?.iD ?: -99)
                                 },
                                 onError = {
                                     Log.e("kilo", "View error:", it)
@@ -321,7 +315,7 @@ fun UserInputScreen(
                                     viewModel.setShowCamera(false)
                                     viewModel.setPhotoUri(it)
                                     viewModel.setShowPhoto(true)
-                                    viewModel.showEmployeeInfoScreen(false,context)
+                                    viewModel.showEmployeeInfoScreen(false,context,employeeDto?.iD ?: -99)
                                 },
                                 onError = {
                                     Log.e("kilo", "View error:", it)

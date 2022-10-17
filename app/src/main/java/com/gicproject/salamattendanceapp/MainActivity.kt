@@ -11,14 +11,12 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.runtime.LaunchedEffect
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.gicproject.emojisurveyapp.domain.model.Answer
 import com.gicproject.salamattendanceapp.common.Constants
 import com.gicproject.salamattendanceapp.data.remote.dto.EmployeeDto
 import com.gicproject.salamattendanceapp.led.LampsUtil
@@ -26,7 +24,6 @@ import com.gicproject.salamattendanceapp.presentation.*
 import com.gicproject.salamattendanceapp.ui.theme.ClassRoomAttendanceTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import java.io.File
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -126,10 +123,14 @@ class MainActivity : ComponentActivity() {
                         ) {
                             val employeeInfo = navController.previousBackStackEntry?.savedStateHandle?.get<EmployeeDto?>(
                                 Constants.STATE_EMPLOYEE_INFO)
+
+                            val messsage = navController.previousBackStackEntry?.savedStateHandle?.get<String?>(
+                                Constants.STATE_SUCCESS_MSG)
                             EmployeeInfoScreen(
                                 navController,
                                 viewModel!!,
                                 employeeInfo = employeeInfo,
+                                messsage
                             )
                         }
                         composable(

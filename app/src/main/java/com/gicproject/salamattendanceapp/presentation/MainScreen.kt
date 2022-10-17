@@ -128,6 +128,7 @@ fun MainScreen(
                                 state.error,
                                 Toast.LENGTH_LONG
                             ).show()
+                            viewModel.emptyToast()
                         }
                     }
                     }
