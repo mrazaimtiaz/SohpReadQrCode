@@ -2,16 +2,24 @@ package com.gicproject.salamattendanceapp.presentation
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
+import android.opengl.ETC1.encodeImage
 import android.os.Handler
+import android.util.Base64.DEFAULT
+import android.util.Base64.encodeToString
 import android.util.Log
 import android_serialport_api.SerialPort
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gicproject.salamattendanceapp.common.Constants
 import com.gicproject.salamattendanceapp.common.Constants.Companion.KEY_DEVICE_ID
 import com.gicproject.salamattendanceapp.common.Resource
+import com.gicproject.salamattendanceapp.domain.model.CheckQrCodeSend
+import com.gicproject.salamattendanceapp.domain.model.CheckSend
 import com.gicproject.salamattendanceapp.domain.repository.DataStoreRepository
 import com.gicproject.salamattendanceapp.domain.use_case.MyUseCases
 import com.gicproject.salamattendanceapp.led.LampsUtil
@@ -26,9 +34,12 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
+import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
+
+private const val TAG = "MyViewModel"
 @HiltViewModel
 class MyViewModel @Inject constructor(
     private val myUseCases: MyUseCases,
@@ -69,6 +80,10 @@ class MyViewModel @Inject constructor(
             delay(500)
             offLamps()
         }*/
+    }
+
+    fun emptyToast(){
+        _stateMain.value = _stateMain.value.copy(error = "")
     }
 
     fun initGetMain() {
@@ -119,7 +134,7 @@ class MyViewModel @Inject constructor(
 
     }
 
-    fun showEmployeeInfoScreen(isCheckIn: Boolean,context: Context) {
+    fun showEmployeeInfoScreen(isCheckIn: Boolean,context: Context,employeeId: Int) {
         //_photoUri
         val iStream: InputStream? = _photoUri.value?.let {
             context.contentResolver.openInputStream(
@@ -128,7 +143,7 @@ class MyViewModel @Inject constructor(
         }
         val inputData: ByteArray? = iStream?.let { getBytes(it) }
         viewModelScope.launch {
-            onEvent(MyEvent.GetAttendance(isCheckIn = isCheckIn))
+            onEvent(MyEvent.GetAttendance(isCheckIn = isCheckIn,id = employeeId,context))
         }
     }
 
@@ -144,20 +159,30 @@ class MyViewModel @Inject constructor(
         return byteBuffer.toByteArray()
     }
 
+    fun myEncodeImage( bm: Bitmap): String{
+        var  baos : ByteArrayOutputStream=  ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.JPEG,100,baos);
+        var b = baos.toByteArray();
+        val encImage: String = android.util.Base64.encodeToString(b, android.util.Base64.DEFAULT);
+
+        return encImage;
+    }
     fun onEvent(event: MyEvent) {
+        
         Log.d("TAG", "onEvent: called unsaved")
         when (event) {
             is MyEvent.CheckQrCode -> {
                 Log.d("TAG", "onEvent: called unsaved1 ")
                 Log.d("TAG", "onEvent: called unsaved2 ${event.barcode} ")
-                Log.d("TAG", "onEvent: called unsaved3 ${event.barcode} ")
                 viewModelScope.launch {
                     val deviceId = repository.getString(KEY_DEVICE_ID) ?: ""
                     myUseCases.getCheckQrCode(
+                        checkQrCodeSend = CheckQrCodeSend(deviceID = deviceId, QRCode = event.barcode, secretKey = Constants.SECRETKEY)
                     ).onEach { result ->
                         when (result) {
                             is Resource.Success -> {
                                 result.data?.let {
+                                    Log.d(TAG, "onEvent: getCheckQrCode success")
                                     _resetScreens.value = true
                                     viewModelScope.launch {
                                         delay(100)
@@ -170,6 +195,7 @@ class MyViewModel @Inject constructor(
                                 }
                             }
                             is Resource.Error -> {
+                                Log.d(TAG, "onEvent: getCheckQrCode failure")
                                 _stateMain.value = _stateMain.value.copy(
                                     isLoading = false,
                                     error = result.message ?: "An unexpected error occurred",
@@ -188,35 +214,53 @@ class MyViewModel @Inject constructor(
             is MyEvent.GetAttendance -> {
                 viewModelScope.launch {
                     val deviceId = repository.getString(KEY_DEVICE_ID) ?: ""
-                    myUseCases.getAttendance(
-                    event.isCheckIn).onEach { result ->
-                        when (result) {
-                            is Resource.Success -> {
-                                viewModelScope.launch {
-                                    delay(2000)
-                                    result.data?.let {
-                                        _stateUserInput.value = _stateUserInput.value.copy(isLoading = false, success = "success", resultId = it)
-                                    }
-                                }
 
+                    if(event.id == -99){
+                        _stateUserInput.value = _stateUserInput.value.copy(
+                            isLoading = false,
+                            error = "No Employee ID - Check FrontEnd",
+                        )
+                    }else{
+                        val currentTime: String =
+                            SimpleDateFormat("HH:mm:ss", Locale.US).format(Date())
+
+                        val imageStream: InputStream? =
+                            photoUri.value?.let { event.context.contentResolver.openInputStream(it) }
+                        val selectedImage = BitmapFactory.decodeStream(imageStream)
+                        val encodedImage: String = myEncodeImage(selectedImage)
+                        myUseCases.getAttendance(
+                            CheckSend(deviceID = deviceId, secretKey = Constants.SECRETKEY,EmployeeNumber = event.id.toString(), time = currentTime),
+                            event.isCheckIn).onEach { result ->
+                            when (result) {
+                                is Resource.Success -> {
+                                    viewModelScope.launch {
+                                        result.data?.let {
+                                            _stateUserInput.value = _stateUserInput.value.copy(isLoading = false, success = "${it.Message} \n ${it.MessageAr}", resultId = it)
+                                        }
+                                    }
+
+                                }
+                                is Resource.Error -> {
+                                    _stateUserInput.value = _stateUserInput.value.copy(
+                                        isLoading = false,
+                                        error = result.message ?: "An unexpected error occurred",
+                                    )
+                                }
+                                is Resource.Loading -> {
+                                    _stateUserInput.value = _stateUserInput.value.copy(isLoading = true)
+                                }
+                                else -> {}
                             }
-                            is Resource.Error -> {
-                                _stateUserInput.value = _stateUserInput.value.copy(
-                                    isLoading = false,
-                                    error = result.message ?: "An unexpected error occurred",
-                                )
-                            }
-                            is Resource.Loading -> {
-                                _stateUserInput.value = _stateUserInput.value.copy(isLoading = true)
-                            }
-                            else -> {}
-                        }
-                    }.launchIn(viewModelScope)
+                        }.launchIn(viewModelScope)
+                    }
+
 
 
                 }
             }
         }
+
+
 
         @Throws(IOException::class)
         fun blueLamps() {

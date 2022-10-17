@@ -18,7 +18,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -42,6 +41,7 @@ fun EmployeeInfoScreen(
     navController: NavController,
     viewModel: MyViewModel,
     employeeInfo: EmployeeDto?,
+    message: String?,
 ) {
     val closeScreen = viewModel.resetScreens.value
 
@@ -77,7 +77,7 @@ fun EmployeeInfoScreen(
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        "Checked In Successful",
+                         message ?: "Checked In Successful",
                         color = darkGreen,
                         textAlign = TextAlign.Center,
                         fontSize = 32.sp
@@ -116,12 +116,12 @@ fun EmployeeInfoScreen(
                         modifier = Modifier.padding(20.dp)
                     ) {
                         Spacer(Modifier.height(10.dp))
-                        TextInfo("Employee ID: ", employeeInfo?.ID?.toString() ?: "")
+                        TextInfo("Employee Code: ", employeeInfo?.employeeNumber?.toString() ?: "")
                         Spacer(Modifier.height(10.dp))
-                        TextInfo("Employee Name: ", employeeInfo?.Name ?: "")
+                        TextInfo("Employee Name: ", employeeInfo?.fullNameEn ?: "")
                         Spacer(Modifier.height(10.dp))
-                        TextInfo("Designation: ", employeeInfo?.designation ?: "")
-                        Spacer(Modifier.height(10.dp))
+                      //  TextInfo("Designation: ", employeeInfo?.departmentEn ?: "")
+                     //   Spacer(Modifier.height(10.dp))
                         // variable for simple date format.
                         val sdf = SimpleDateFormat("hh:mm:ss aa")
 

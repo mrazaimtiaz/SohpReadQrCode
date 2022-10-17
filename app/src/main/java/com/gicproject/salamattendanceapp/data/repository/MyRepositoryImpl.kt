@@ -6,6 +6,9 @@ import com.gicproject.salamattendanceapp.data.remote.dto.*
 import com.gicproject.salamattendanceapp.data.remote.MyApi
 import com.gicproject.emojisurveyapp.domain.model.CustomerInput
 import com.gicproject.salamattendanceapp.data.data_source.MyDao
+import com.gicproject.salamattendanceapp.domain.model.CheckQrCodeSend
+import com.gicproject.salamattendanceapp.domain.model.CheckSend
+import com.gicproject.salamattendanceapp.domain.model.ResultClass
 import com.gicproject.salamattendanceapp.domain.repository.MyRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -13,6 +16,17 @@ import javax.inject.Inject
 class MyRepositoryImpl @Inject constructor(
     private val api: MyApi, private val dao: MyDao
 ): MyRepository {
+    override suspend fun checkQrCode(checkQrCodeSend: CheckQrCodeSend): List<ResultClass>? {
+       return api.checkQrCode(checkQrCodeSend)
+    }
+
+    override suspend fun checkSend(checkSend: CheckSend,isCheckIn: Boolean): List<ResultClass>? {
+        return if(isCheckIn){
+            api.checkIn(checkSend =checkSend )
+        }else{
+            api.checkOut(checkSend =checkSend )
+        }
+    }
 
     override suspend fun getLocations(): List<LocationDto>? {
         return api.getLocations()
