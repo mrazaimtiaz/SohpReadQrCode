@@ -170,7 +170,7 @@ fun UserInputScreen(
                                     AndroidView(
                                         {
                                             previewView }, modifier = Modifier
-                                            .size(500.dp, 500.dp)
+                                            .size(700.dp, 700.dp)  //500 7inch tablet
                                             .rotate(-90f)
                                             .border(
                                                 2.dp,
@@ -184,7 +184,7 @@ fun UserInputScreen(
                                         contentDescription = "Image",
                                         contentScale = ContentScale.FillBounds,
                                         modifier = Modifier
-                                            .size(500.dp, 500.dp)
+                                            .size(700.dp, 700.dp) //500 7inch tablet
                                             .rotate(-90f)
                                             .border(
                                                 2.dp,
@@ -235,12 +235,12 @@ fun UserInputScreen(
                                         modifier = Modifier.padding(20.dp)
                                     ) {
                                         Spacer(Modifier.height(10.dp))
-                                        TextInfo("Employee ID: ", employeeDto?.iD?.toString() ?: "")
+                                        TextInfo("Employee ID: ", employeeDto?.employeeNumber?.toString() ?: "",)
                                         Spacer(Modifier.height(10.dp))
                                         TextInfo("Employee Name: ", employeeDto?.fullNameEn ?: "")
                                         Spacer(Modifier.height(10.dp))
-                                        TextInfo("Designation: ", employeeDto?.departmentEn ?: "")
-                                        Spacer(Modifier.height(10.dp))
+                                       // TextInfo("Designation: ", employeeDto?.departmentEn ?: "")
+                                       // Spacer(Modifier.height(10.dp))
                                     }
                                     Column(
                                         verticalArrangement = Arrangement.Center,
@@ -286,7 +286,7 @@ fun UserInputScreen(
                                     viewModel.setShowCamera(false)
                                     viewModel.setPhotoUri(it)
                                     viewModel.setShowPhoto(true)
-                                    viewModel.showEmployeeInfoScreen(true,context,employeeDto?.iD ?: -99)
+                                    viewModel.showEmployeeInfoScreen(true,context,employeeDto?.employeeNumber ?: "-99")
                                 },
                                 onError = {
                                     Log.e("kilo", "View error:", it)
@@ -315,7 +315,7 @@ fun UserInputScreen(
                                     viewModel.setShowCamera(false)
                                     viewModel.setPhotoUri(it)
                                     viewModel.setShowPhoto(true)
-                                    viewModel.showEmployeeInfoScreen(false,context,employeeDto?.iD ?: -99)
+                                    viewModel.showEmployeeInfoScreen(false,context,employeeDto?.employeeNumber ?: "-99")
                                 },
                                 onError = {
                                     Log.e("kilo", "View error:", it)

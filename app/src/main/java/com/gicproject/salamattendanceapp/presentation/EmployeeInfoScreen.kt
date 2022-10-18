@@ -155,7 +155,7 @@ fun TextInfo(title: String, value: String) {
         pushStyle(
             style = SpanStyle(
                 fontWeight = FontWeight.Bold,
-                fontSize = 20.sp,
+                fontSize = 30.sp, //20  7inch tablet
                 color = MaterialTheme.colors.primary
             )
         )
@@ -163,7 +163,7 @@ fun TextInfo(title: String, value: String) {
         pushStyle(
             style = SpanStyle(
                 fontWeight = FontWeight.Normal,
-                fontSize = 20.sp,
+                fontSize = 30.sp,//20 7inch tablet
                 color = Color.Black
             )
         )
