@@ -63,7 +63,9 @@ fun UserInputScreen(
     val state = viewModel.stateUserInput.value
     
     //initalize camera
-     val lensFacing = CameraSelector.LENS_FACING_FRONT
+    //todo for new prodvx 7 inch new  CameraSelector.LENS_FACING_BACK
+    // for old prodvx 10 inch  CameraSelector.LENS_FACING_FRONT
+     val lensFacing = CameraSelector.LENS_FACING_BACK
      val context = LocalContext.current
      val lifecycleOwner = LocalLifecycleOwner.current
  
@@ -77,22 +79,46 @@ fun UserInputScreen(
          .build()
 
     val closeScreen = viewModel.resetScreens.value
-    LaunchedEffect(true) {
+
+    LaunchedEffect(key1 = true ){
+        delay(1000)
+        takePhoto(
+            filenameFormat = "yyyy-MM-dd-HH-mm-ss-SSS",
+            imageCapture = imageCapture,
+            outputDirectory = outputDirectory,
+            executor = executor,
+            onImageCaptured = {
+                viewModel.setShowCamera(false)
+                viewModel.setPhotoUri(it)
+                viewModel.setShowPhoto(true)
+                viewModel.showEmployeeInfoScreen(true,context,employeeDto?.employeeNumber ?: "-99")
+            },
+            onError = {
+                Log.e("kilo", "View error:", it)
+                viewModel.setCameraInitialized(false)
+            }
+        )
+    }
+ /*   LaunchedEffect(true) {
         delay(15000)
         navController.popBackStack(route = Screen.MainScreen.route, inclusive = false)
     }
     if(closeScreen){
         navController.popBackStack(route = Screen.MainScreen.route, inclusive = false)
-    }
+    }*/
     LaunchedEffect(key1 = true) {
+
         Log.d("TAG", "FingerPrintPage: true")
         //  if (!viewModel.isCameraInitialized.value) {
         val cameraProvider = context.getCameraProvider(onError = {
+            Log.d("TAG", "FingerPrintPage: INITALZED ERROR true")
             viewModel.setCameraInitialized(false)
         }, onSucess = {
+            Log.d("TAG", "FingerPrintPage:INITALZED true")
             viewModel.setCameraInitialized(true)
         })
         cameraProvider.unbindAll()
+
         try {
             cameraProvider.bindToLifecycle(
                 lifecycleOwner,
@@ -170,7 +196,7 @@ fun UserInputScreen(
                                     AndroidView(
                                         {
                                             previewView }, modifier = Modifier
-                                            .size(700.dp, 700.dp)  //500 7inch tablet
+                                            .size(500.dp, 500.dp)  //500 7inch tablet
                                             .rotate(-90f)
                                             .border(
                                                 2.dp,
@@ -184,7 +210,7 @@ fun UserInputScreen(
                                         contentDescription = "Image",
                                         contentScale = ContentScale.FillBounds,
                                         modifier = Modifier
-                                            .size(700.dp, 700.dp) //500 7inch tablet
+                                            .size(500.dp, 500.dp) //500 7inch tablet
                                             .rotate(-90f)
                                             .border(
                                                 2.dp,
@@ -270,8 +296,8 @@ fun UserInputScreen(
                         CircularProgressIndicator()
                     }
 
-                }else{
-                    Row(
+                 }else{
+                   /* Row(
                         horizontalArrangement = Arrangement.SpaceAround,
                         modifier = Modifier.fillMaxWidth()
                     ) {
@@ -334,7 +360,7 @@ fun UserInputScreen(
 
                             }
                         }
-                    }
+                    }*/
                 }
 
             }
