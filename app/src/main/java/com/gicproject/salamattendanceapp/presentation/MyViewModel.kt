@@ -74,6 +74,32 @@ class MyViewModel @Inject constructor(
 
     init {
         var lampUtil: LampsUtil = LampsUtil()
+        viewModelScope.launch {
+            showUserInputScreen("d0e9049a-a4a7-4ea7-9376-8d280fb9c1ceOL125")
+            delay(1000)
+
+            showUserInputScreen("d0e9049a-a4a7-4ea7-9376-8d280fb9c1ceOL125")
+            delay(1000)
+
+
+            showUserInputScreen("d0e9049a-a4a7-4ea7-9376-8d280fb9c1ceOL125")
+            delay(1000)
+
+            showUserInputScreen("d0e9049a-a4a7-4ea7-9376-8d280fb9c1ceOL125")
+            delay(1000)
+
+
+            showUserInputScreen("d0e9049a-a4a7-4ea7-9376-8d280fb9c1ceOL125")
+            delay(1000)
+
+            showUserInputScreen("d0e9049a-a4a7-4ea7-9376-8d280fb9c1ceOL125")
+            delay(1000)
+
+            showUserInputScreen("d0e9049a-a4a7-4ea7-9376-8d280fb9c1ceOL125")
+            delay(1000)
+
+
+        }
         initPreference()
         //   blueLamps()
         /*viewModelScope.launch {
