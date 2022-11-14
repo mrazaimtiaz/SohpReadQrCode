@@ -81,7 +81,7 @@ fun UserInputScreen(
     val closeScreen = viewModel.resetScreens.value
 
     LaunchedEffect(key1 = true ){
-        delay(3000)
+        delay(5000)
         takePhoto(
             filenameFormat = "yyyy-MM-dd-HH-mm-ss-SSS",
             imageCapture = imageCapture,
