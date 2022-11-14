@@ -63,9 +63,9 @@ fun UserInputScreen(
     val state = viewModel.stateUserInput.value
     
     //initalize camera
-    //todo for new prodvx 7 inch new  CameraSelector.LENS_FACING_BACK
-    // for old prodvx 10 inch  CameraSelector.LENS_FACING_FRONT
-     val lensFacing = CameraSelector.LENS_FACING_BACK
+    //todo for new  android 9.0 prodvx 10 inch new  CameraSelector.LENS_FACING_BACK
+    // for old android 8.0 prodvx 10 inch  CameraSelector.LENS_FACING_FRONT
+     val lensFacing = CameraSelector.LENS_FACING_FRONT
      val context = LocalContext.current
      val lifecycleOwner = LocalLifecycleOwner.current
  
@@ -81,7 +81,7 @@ fun UserInputScreen(
     val closeScreen = viewModel.resetScreens.value
 
     LaunchedEffect(key1 = true ){
-        delay(1000)
+        delay(3000)
         takePhoto(
             filenameFormat = "yyyy-MM-dd-HH-mm-ss-SSS",
             imageCapture = imageCapture,
@@ -395,7 +395,7 @@ fun UserInputScreen(
                 verticalAlignment = Alignment.Top
             ) {
                 IconButton(onClick = {
-                    navController.popBackStack()
+                    navController.popBackStack(route = Screen.MainScreen.route, inclusive = false)
                 }) {
                     Icon(
                         Icons.Filled.KeyboardArrowLeft,

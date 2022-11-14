@@ -2,9 +2,9 @@ package com.gicproject.salamattendanceapp.common
 
 class Constants {
     companion object {
-    //    const val BASE_URL = "http://172.25.25.159/SalamScreenAPI/"
+        const val BASE_URL = "http://172.25.25.159/SalamScreenAPI/"
        val SECRETKEY: String? = "jCXumGJZnSfsr1HiZ06Czg=="
-        const val BASE_URL = "http://gickuwait-dev.com/SalamScreenAPI/"
+      //  const val BASE_URL = "http://gickuwait-dev.com/SalamScreenAPI/"
         const val KEY_AUTO_DETECT_CARD = "auto detect card"
         const val STATE_MSG_EN = "state msg en"
         const val STATE_MSG_AR = "state msg ar"
