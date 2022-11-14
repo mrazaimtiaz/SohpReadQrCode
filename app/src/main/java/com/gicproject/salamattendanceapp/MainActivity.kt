@@ -94,7 +94,7 @@ class MainActivity : ComponentActivity() {
                         navController = navController,
                         //
                         //startDestination = Screen.TestCameraScreen.route
-                        startDestination =  Screen.MainScreen.route
+                            startDestination =  Screen.MainScreen.route
                     ) {
                         composable(
                             route = Screen.MainScreen.route

@@ -87,14 +87,15 @@ fun MainScreen(
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .width(290.dp)
-                        .height(65.dp).pointerInput(Unit) {
-                        detectDragGestures { change, _ ->
-                            if (change.position.y > 400) {
-                                navController.navigate(Screen.SettingScreen.route)
+                        .height(65.dp)
+                        .pointerInput(Unit) {
+                            detectDragGestures { change, _ ->
+                                if (change.position.y > 400) {
+                                    navController.navigate(Screen.SettingScreen.route)
+                                }
+                                change.consume()
                             }
-                            change.consume()
-                        }
-                    },
+                        },
                     contentDescription = "qrcode sample"
                 )
             }

@@ -130,11 +130,12 @@ class MyViewModel @Inject constructor(
     }
 
     fun showUserInputScreen(barcode: String) {
+        Log.d(TAG, "showUserInputScreen barcode: $barcode")
         onEvent(MyEvent.CheckQrCode(barcode = barcode))
 
     }
 
-    fun showEmployeeInfoScreen(isCheckIn: Boolean,context: Context,employeeId: Int) {
+    fun showEmployeeInfoScreen(isCheckIn: Boolean,context: Context,employeeId: String) {
         //_photoUri
         val iStream: InputStream? = _photoUri.value?.let {
             context.contentResolver.openInputStream(
@@ -215,7 +216,7 @@ class MyViewModel @Inject constructor(
                 viewModelScope.launch {
                     val deviceId = repository.getString(KEY_DEVICE_ID) ?: ""
 
-                    if(event.id == -99){
+                    if(event.id == "-99"){
                         _stateUserInput.value = _stateUserInput.value.copy(
                             isLoading = false,
                             error = "No Employee ID - Check FrontEnd",
@@ -235,6 +236,7 @@ class MyViewModel @Inject constructor(
                                 is Resource.Success -> {
                                     viewModelScope.launch {
                                         result.data?.let {
+                                            Log.d(TAG, "onEvent: getAttendance ${it.Message} \n ${it.MessageAr}")
                                             _stateUserInput.value = _stateUserInput.value.copy(isLoading = false, success = "${it.Message} \n ${it.MessageAr}", resultId = it)
                                         }
                                     }

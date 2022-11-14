@@ -4,6 +4,7 @@ import com.gicproject.salamattendanceapp.data.remote.dto.*
 import com.gicproject.salamattendanceapp.domain.model.CheckQrCodeSend
 import com.gicproject.salamattendanceapp.domain.model.CheckSend
 import com.gicproject.salamattendanceapp.domain.model.ResultClass
+import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -15,7 +16,7 @@ interface MyApi {
 
     @POST("api/CheckQrCode")
     suspend fun checkQrCode(
-        @Body checkQrCodeSendModel: CheckQrCodeSend
+        @Body checkQrCodeSendModel: RequestBody
     ): List<ResultClass>?
 
     @POST("api/CheckIn")

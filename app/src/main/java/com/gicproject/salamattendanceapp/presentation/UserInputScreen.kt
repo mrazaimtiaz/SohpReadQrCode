@@ -63,6 +63,8 @@ fun UserInputScreen(
     val state = viewModel.stateUserInput.value
     
     //initalize camera
+    //todo for new  android 9.0 prodvx 10 inch new  CameraSelector.LENS_FACING_BACK
+    // for old android 8.0 prodvx 10 inch  CameraSelector.LENS_FACING_FRONT
      val lensFacing = CameraSelector.LENS_FACING_FRONT
      val context = LocalContext.current
      val lifecycleOwner = LocalLifecycleOwner.current
@@ -77,22 +79,46 @@ fun UserInputScreen(
          .build()
 
     val closeScreen = viewModel.resetScreens.value
-    LaunchedEffect(true) {
+
+    LaunchedEffect(key1 = true ){
+        delay(3000)
+        takePhoto(
+            filenameFormat = "yyyy-MM-dd-HH-mm-ss-SSS",
+            imageCapture = imageCapture,
+            outputDirectory = outputDirectory,
+            executor = executor,
+            onImageCaptured = {
+                viewModel.setShowCamera(false)
+                viewModel.setPhotoUri(it)
+                viewModel.setShowPhoto(true)
+                viewModel.showEmployeeInfoScreen(true,context,employeeDto?.employeeNumber ?: "-99")
+            },
+            onError = {
+                Log.e("kilo", "View error:", it)
+                viewModel.setCameraInitialized(false)
+            }
+        )
+    }
+ /*   LaunchedEffect(true) {
         delay(15000)
         navController.popBackStack(route = Screen.MainScreen.route, inclusive = false)
     }
     if(closeScreen){
         navController.popBackStack(route = Screen.MainScreen.route, inclusive = false)
-    }
+    }*/
     LaunchedEffect(key1 = true) {
+
         Log.d("TAG", "FingerPrintPage: true")
         //  if (!viewModel.isCameraInitialized.value) {
         val cameraProvider = context.getCameraProvider(onError = {
+            Log.d("TAG", "FingerPrintPage: INITALZED ERROR true")
             viewModel.setCameraInitialized(false)
         }, onSucess = {
+            Log.d("TAG", "FingerPrintPage:INITALZED true")
             viewModel.setCameraInitialized(true)
         })
         cameraProvider.unbindAll()
+
         try {
             cameraProvider.bindToLifecycle(
                 lifecycleOwner,
@@ -170,7 +196,7 @@ fun UserInputScreen(
                                     AndroidView(
                                         {
                                             previewView }, modifier = Modifier
-                                            .size(500.dp, 500.dp)
+                                            .size(500.dp, 500.dp)  //500 7inch tablet
                                             .rotate(-90f)
                                             .border(
                                                 2.dp,
@@ -184,7 +210,7 @@ fun UserInputScreen(
                                         contentDescription = "Image",
                                         contentScale = ContentScale.FillBounds,
                                         modifier = Modifier
-                                            .size(500.dp, 500.dp)
+                                            .size(500.dp, 500.dp) //500 7inch tablet
                                             .rotate(-90f)
                                             .border(
                                                 2.dp,
@@ -235,12 +261,12 @@ fun UserInputScreen(
                                         modifier = Modifier.padding(20.dp)
                                     ) {
                                         Spacer(Modifier.height(10.dp))
-                                        TextInfo("Employee ID: ", employeeDto?.iD?.toString() ?: "")
+                                        TextInfo("Employee ID: ", employeeDto?.employeeNumber?.toString() ?: "",)
                                         Spacer(Modifier.height(10.dp))
                                         TextInfo("Employee Name: ", employeeDto?.fullNameEn ?: "")
                                         Spacer(Modifier.height(10.dp))
-                                        TextInfo("Designation: ", employeeDto?.departmentEn ?: "")
-                                        Spacer(Modifier.height(10.dp))
+                                       // TextInfo("Designation: ", employeeDto?.departmentEn ?: "")
+                                       // Spacer(Modifier.height(10.dp))
                                     }
                                     Column(
                                         verticalArrangement = Arrangement.Center,
@@ -270,8 +296,8 @@ fun UserInputScreen(
                         CircularProgressIndicator()
                     }
 
-                }else{
-                    Row(
+                 }else{
+                   /* Row(
                         horizontalArrangement = Arrangement.SpaceAround,
                         modifier = Modifier.fillMaxWidth()
                     ) {
@@ -286,7 +312,7 @@ fun UserInputScreen(
                                     viewModel.setShowCamera(false)
                                     viewModel.setPhotoUri(it)
                                     viewModel.setShowPhoto(true)
-                                    viewModel.showEmployeeInfoScreen(true,context,employeeDto?.iD ?: -99)
+                                    viewModel.showEmployeeInfoScreen(true,context,employeeDto?.employeeNumber ?: "-99")
                                 },
                                 onError = {
                                     Log.e("kilo", "View error:", it)
@@ -315,7 +341,7 @@ fun UserInputScreen(
                                     viewModel.setShowCamera(false)
                                     viewModel.setPhotoUri(it)
                                     viewModel.setShowPhoto(true)
-                                    viewModel.showEmployeeInfoScreen(false,context,employeeDto?.iD ?: -99)
+                                    viewModel.showEmployeeInfoScreen(false,context,employeeDto?.employeeNumber ?: "-99")
                                 },
                                 onError = {
                                     Log.e("kilo", "View error:", it)
@@ -334,7 +360,7 @@ fun UserInputScreen(
 
                             }
                         }
-                    }
+                    }*/
                 }
 
             }
@@ -369,7 +395,7 @@ fun UserInputScreen(
                 verticalAlignment = Alignment.Top
             ) {
                 IconButton(onClick = {
-                    navController.popBackStack()
+                    navController.popBackStack(route = Screen.MainScreen.route, inclusive = false)
                 }) {
                     Icon(
                         Icons.Filled.KeyboardArrowLeft,

@@ -32,6 +32,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
+import com.gicproject.salamattendanceapp.Screen
 import com.gicproject.salamattendanceapp.utils.QrCodeAnalyzer
 
 @Composable
@@ -154,12 +155,12 @@ fun FlippedCard(
         text = { Text(text = "Check In Successful") },
         onDismissRequest = {
             showDialog.value = false
-            navController.popBackStack()
+            navController.popBackStack(route = Screen.MainScreen.route, inclusive = false)
         },
         confirmButton = {
             TextButton(onClick = {
                 showDialog.value = false
-                navController.popBackStack()
+                navController.popBackStack(route = Screen.MainScreen.route, inclusive = false)
             })
             { Text(text = "OK") }
         },
