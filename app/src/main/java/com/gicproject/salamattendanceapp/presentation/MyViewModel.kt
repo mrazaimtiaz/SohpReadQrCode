@@ -13,6 +13,7 @@ import android.util.Log
 import android_serialport_api.SerialPort
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.core.net.toFile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gicproject.salamattendanceapp.common.Constants
@@ -229,6 +230,7 @@ class MyViewModel @Inject constructor(
                             photoUri.value?.let { event.context.contentResolver.openInputStream(it) }
                         val selectedImage = BitmapFactory.decodeStream(imageStream)
                         val encodedImage: String = myEncodeImage(selectedImage)
+                        photoUri.value?.toFile()?.delete()
                         myUseCases.getAttendance(
                             CheckSend(deviceID = deviceId, secretKey = Constants.SECRETKEY,EmployeeNumber = event.id.toString(), time = currentTime),
                             event.isCheckIn).onEach { result ->

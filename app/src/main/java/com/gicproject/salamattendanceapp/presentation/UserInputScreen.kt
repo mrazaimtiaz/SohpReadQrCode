@@ -1,13 +1,17 @@
 package com.gicproject.salamattendanceapp.presentation
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
 import android.util.Log
+import android.view.OrientationEventListener
 import android.widget.Toast
 import androidx.camera.core.AspectRatio.RATIO_16_9
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
+import androidx.camera.core.Preview
 import androidx.camera.view.PreviewView
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
@@ -52,6 +56,7 @@ import java.util.*
 import java.util.concurrent.Executor
 
 //@Preview(showSystemUi = true, showBackground = true)
+@SuppressLint("UnsafeOptInUsageError")
 @Composable
 fun UserInputScreen(
     navController: NavController,
@@ -65,15 +70,24 @@ fun UserInputScreen(
     //initalize camera
     //todo for new  android 9.0 prodvx 10 inch new  CameraSelector.LENS_FACING_BACK
     // for old android 8.0 prodvx 10 inch  CameraSelector.LENS_FACING_FRONT
-     val lensFacing = CameraSelector.LENS_FACING_FRONT
-     val context = LocalContext.current
+     val lensFacing = CameraSelector.LENS_FACING_BACK
+    val context = LocalContext.current
      val lifecycleOwner = LocalLifecycleOwner.current
  
-     val preview = androidx.camera.core.Preview.Builder().build()
+     val preview = Preview.Builder().build()
+
      val previewView = remember { PreviewView(context) }
-   // previewView.rotation = 270f
-     val imageCapture: ImageCapture = remember { ImageCapture.Builder()
-         .setTargetAspectRatio(RATIO_16_9).build() }
+  //  previewView.rotation = 0f
+    previewView.implementationMode = PreviewView.ImplementationMode.COMPATIBLE
+
+   // preview.targetRotation = android.view.Surface.ROTATION_270
+     val imageCapture: ImageCapture = remember { ImageCapture.Builder().build() }
+
+
+  // imageCapture.targetRotation = android.view.Surface.ROTATION_270
+
+
+
      val cameraSelector = CameraSelector.Builder()
          .requireLensFacing(lensFacing)
          .build()

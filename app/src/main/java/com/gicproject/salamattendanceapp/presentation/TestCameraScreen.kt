@@ -139,7 +139,7 @@ fun takePhoto(
     )
 
     val metadata = ImageCapture.Metadata().apply {
-        isReversedHorizontal = true
+        isReversedHorizontal = false
     }
     val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).setMetadata(metadata).build()
 
