@@ -162,6 +162,9 @@ class MainActivity : ComponentActivity() {
                         composable(Screen.SettingScreen.route) {
                             SettingScreen(navController,viewModel!!)
                         }
+                        composable(Screen.InsertMobileNumberScreen.route) {
+                            InsertMobileNumberScreen(navController,viewModel!!)
+                        }
                     }
                 }
             }

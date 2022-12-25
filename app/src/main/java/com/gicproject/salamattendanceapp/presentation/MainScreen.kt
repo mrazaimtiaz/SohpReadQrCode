@@ -12,10 +12,17 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
@@ -34,6 +41,7 @@ import com.gicproject.salamattendanceapp.Screen
 import com.gicproject.salamattendanceapp.common.Constants
 import com.gicproject.salamattendanceapp.ui.theme.*
 import kotlinx.coroutines.delay
+import okhttp3.internal.wait
 import java.io.File
 import java.util.*
 import java.util.concurrent.Executor
@@ -108,16 +116,118 @@ fun MainScreen(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(
-                        text = "Please Scan a QR code",
-                        color = MaterialTheme.colors.primary, fontSize = 60.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                    ){
+                        var color =  MaterialTheme.colors.primary
+                        Box() {
+                            Box(
+                                modifier = Modifier
+                                    .clip(CircleShape)
+                                    .background(color = color),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text("  1  ",
+                                    modifier= Modifier.padding(0.dp),
+                                    color = Color.White, fontSize =40.sp,
+                                    fontWeight = FontWeight.Bold)
+                            }
+
+                        }
+                        Spacer(modifier = Modifier.width(50.dp))
+                        Text(
+                            text = "Please Scan a QR code",
+                            color = MaterialTheme.colors.primary, fontSize = 40.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(10.dp))
                     Image(
                         painter = painterResource(id = R.drawable.sampleqrcode),
-                        modifier = Modifier.size(480.dp),
+                        modifier = Modifier.size(200.dp),
                         contentDescription = "qrcode sample"
                     )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text(
+                        text = "OR",
+                        color = Color.Black, fontSize = 60.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Row(
+                    ){
+                        var color =  MaterialTheme.colors.primary
+                        Box() {
+                            Box(
+                                modifier = Modifier
+                                    .clip(CircleShape)
+                                    .background(color = color),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text("  2  ",
+                                    modifier= Modifier.padding(0.dp),
+                                    color = Color.White, fontSize =40.sp,
+                                    fontWeight = FontWeight.Bold)
+                            }
+
+                        }
+                        Spacer(modifier = Modifier.width(50.dp))
+                        Text(
+                            text = "Send OTP to your Mobile Number",
+                            color = MaterialTheme.colors.primary, fontSize = 40.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = " / ",
+                            color =Color.Black, fontSize = 40.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                                text = "Use PIN Code",
+                        color = MaterialTheme.colors.primaryVariant, fontSize = 40.sp,
+                        fontWeight = FontWeight.Bold
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceAround
+                    ) {
+                        Button(onClick = {
+                            navController.navigate(Screen.InsertMobileNumberScreen.route)},
+                            modifier = Modifier
+                                .padding(20.dp)
+                                .shadow(50.dp, shape = RoundedCornerShape(5.dp)),
+                            shape = RoundedCornerShape(30.dp),
+                        ) {
+                            Icon(
+                                Icons.Default.Send,
+                                contentDescription = "",
+                                modifier = Modifier.size(50.dp)
+                            )
+                            Spacer(modifier = Modifier.width(20.dp))
+                            Text("Send OTP",  fontSize = 30.sp)
+                            Spacer(modifier = Modifier.width(10.dp))
+                        }
+                        Button(onClick = {
+                            navController.navigate(Screen.InsertMobileNumberScreen.route)},
+                            modifier = Modifier
+                                .padding(20.dp)
+                                .shadow(50.dp, shape = RoundedCornerShape(5.dp)),
+                            colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.primaryVariant),
+                            shape = RoundedCornerShape(30.dp),
+                        ) {
+                            Icon(
+                                Icons.Default.Send,
+                                contentDescription = "",
+                                modifier = Modifier.size(50.dp)
+                            )
+                            Spacer(modifier = Modifier.width(20.dp))
+                            Text("PIN Code",  fontSize = 30.sp)
+                            Spacer(modifier = Modifier.width(10.dp))
+                        }
+                    }
+
                     if(state.isLoading){
                         CircularProgressIndicator()
                     }
