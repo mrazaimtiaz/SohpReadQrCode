@@ -1,6 +1,5 @@
 package com.gicproject.salamattendanceapp.presentation
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -9,11 +8,9 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -38,6 +35,7 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.gicproject.salamattendanceapp.R
 import com.gicproject.salamattendanceapp.Screen
+import com.gicproject.salamattendanceapp.common.Constants
 import com.gicproject.salamattendanceapp.common.Constants.Companion.heartBeatJson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -45,13 +43,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun InsertMobileNumberScreen(
+fun InsertIdScreen(
     navController: NavController,
     viewModel: MyViewModel,
 ) {
 
+    val state = viewModel.stateInsertId.value
     val listState = rememberLazyListState()
 
     val second = remember { mutableStateOf(80) }
@@ -148,9 +146,6 @@ fun InsertMobileNumberScreen(
                                 shape = RoundedCornerShape(10.dp)
                             )
                     ) {
-
-
-
                         Text(
                             textMobileNumber.value,
                             color = Color.White,
@@ -287,30 +282,48 @@ fun InsertMobileNumberScreen(
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Button(onClick = {
-                            showDialog.value = true
-                            CoroutineScope(Dispatchers.Main).launch {
-                                delay(2000)
-                                navController.popBackStack(Screen.MainScreen.route,false)
-                            }
-                                         },
-                            modifier = Modifier
-                                .padding(20.dp)
-                                .shadow(50.dp, shape = RoundedCornerShape(5.dp)),
-                            shape = RoundedCornerShape(30.dp),
-                            colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.background)
+                        if (state.isLoading) {
+                            CircularProgressIndicator()
+                        }else{
+                            Button(onClick = {
+                                if (textMobileNumber.value.isNotBlank()) {
+                                    viewModel.onEvent(MyEvent.SendOtpCode(textMobileNumber.value))
+                                }
+                            },
+                                modifier = Modifier
+                                    .padding(20.dp)
+                                    .shadow(50.dp, shape = RoundedCornerShape(5.dp)),
+                                shape = RoundedCornerShape(30.dp),
+                                colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.background)
                             ) {
-                            Icon(
-                                Icons.Default.Send,
-                                contentDescription = "",
-                                modifier = Modifier.size(50.dp)
-                            )
-                            Spacer(modifier = Modifier.width(20.dp))
-                            Text("Send OTP",  fontSize = 30.sp)
-                            Spacer(modifier = Modifier.width(10.dp))
+                                Icon(
+                                    Icons.Default.Send,
+                                    contentDescription = "",
+                                    modifier = Modifier.size(50.dp)
+                                )
+                                Spacer(modifier = Modifier.width(20.dp))
+                                Text("Send OTP",  fontSize = 30.sp)
+                                Spacer(modifier = Modifier.width(10.dp))
+                            }
                         }
                     }
+                    if (state.error.isNotBlank()) {
+                        Text(state.error, color = MaterialTheme.colors.error)
+                    }
                 }
+            }
+
+            if(state.success.isNotBlank()){
+                LaunchedEffect(key1 = Unit, block = {
+                    showDialog.value = true
+                    CoroutineScope(Dispatchers.Main).launch {
+                        delay(2000)
+                        navController.currentBackStackEntry?.savedStateHandle?.set(
+                            Constants.STATE_RESULT_CLASS, state.resultClass
+                        )
+                        navController.navigate(Screen.InsertOtpScreen.route)
+                    }
+                })
 
             }
 

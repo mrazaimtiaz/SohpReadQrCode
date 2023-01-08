@@ -19,6 +19,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.gicproject.salamattendanceapp.common.Constants
 import com.gicproject.salamattendanceapp.data.remote.dto.EmployeeDto
+import com.gicproject.salamattendanceapp.domain.model.ResultClass
 import com.gicproject.salamattendanceapp.led.LampsUtil
 import com.gicproject.salamattendanceapp.presentation.*
 import com.gicproject.salamattendanceapp.ui.theme.ClassRoomAttendanceTheme
@@ -162,8 +163,15 @@ class MainActivity : ComponentActivity() {
                         composable(Screen.SettingScreen.route) {
                             SettingScreen(navController,viewModel!!)
                         }
-                        composable(Screen.InsertMobileNumberScreen.route) {
-                            InsertMobileNumberScreen(navController,viewModel!!)
+                        composable(Screen.InsertIdScreen.route) {
+                            viewModel!!.initInsertId()
+                            InsertIdScreen(navController,viewModel!!)
+                        }
+                        composable(Screen.InsertOtpScreen.route) {
+                            viewModel!!.initInsertOtp()
+                            val resultClass = navController.previousBackStackEntry?.savedStateHandle?.get<ResultClass?>(
+                                Constants.STATE_RESULT_CLASS)
+                            InsertOtpScreen(navController,viewModel!!,resultClass)
                         }
                     }
                 }

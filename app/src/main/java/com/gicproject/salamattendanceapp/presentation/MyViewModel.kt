@@ -5,10 +5,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.opengl.ETC1.encodeImage
 import android.os.Handler
-import android.util.Base64.DEFAULT
-import android.util.Base64.encodeToString
 import android.util.Log
 import android_serialport_api.SerialPort
 import androidx.compose.runtime.State
@@ -19,6 +16,7 @@ import androidx.lifecycle.viewModelScope
 import com.gicproject.salamattendanceapp.common.Constants
 import com.gicproject.salamattendanceapp.common.Constants.Companion.KEY_DEVICE_ID
 import com.gicproject.salamattendanceapp.common.Resource
+import com.gicproject.salamattendanceapp.domain.model.CheckOtpSend
 import com.gicproject.salamattendanceapp.domain.model.CheckQrCodeSend
 import com.gicproject.salamattendanceapp.domain.model.CheckSend
 import com.gicproject.salamattendanceapp.domain.repository.DataStoreRepository
@@ -52,6 +50,12 @@ class MyViewModel @Inject constructor(
 
     private val _isDarkTheme = mutableStateOf(false)
     val isDarkTheme: State<Boolean> = _isDarkTheme
+
+    private val _stateInsertOtp = mutableStateOf(InsertOtpScreenState())
+    val stateInsertOtp: State<InsertOtpScreenState> = _stateInsertOtp
+
+    private val _stateInsertId = mutableStateOf(InsertIdScreenState())
+    val stateInsertId: State<InsertIdScreenState> = _stateInsertId
 
     private val _stateMain = mutableStateOf(MainScreenState())
     val stateMain: State<MainScreenState> = _stateMain
@@ -89,6 +93,14 @@ class MyViewModel @Inject constructor(
 
     fun initGetMain() {
         _stateMain.value = MainScreenState()
+    }
+
+    fun initInsertId(){
+        _stateInsertId.value = InsertIdScreenState()
+    }
+
+    fun initInsertOtp(){
+        _stateInsertOtp.value = InsertOtpScreenState()
     }
 
     fun initUserInput() {
@@ -173,6 +185,40 @@ class MyViewModel @Inject constructor(
         
         Log.d("TAG", "onEvent: called unsaved")
         when (event) {
+            is MyEvent.SendOtpCode -> {
+                Log.d("TAG", "onEvent: called unsaved1 ")
+                Log.d("TAG", "onEvent: called unsaved2 ${event.employeeCode} ")
+                viewModelScope.launch {
+                    val deviceId = repository.getString(KEY_DEVICE_ID) ?: ""
+                    myUseCases.getSendOtpCode(
+                        checkOtpSend = CheckOtpSend(deviceID = deviceId, employeeCode = event.employeeCode, secretKey = Constants.SECRETKEY)
+                    ).onEach { result ->
+                        when (result) {
+                            is Resource.Success -> {
+                                result.data?.let {
+                                    Log.d(TAG, "onEvent: getCheckQrCode success")
+                                    viewModelScope.launch {
+                                        _stateInsertId.value = _stateInsertId.value.copy(isLoading = false, success = "success", resultClass = it)
+                                    }
+                                }
+                            }
+                            is Resource.Error -> {
+                                Log.d(TAG, "onEvent: getCheckQrCode failure")
+                                _stateInsertId.value = _stateInsertId.value.copy(
+                                    isLoading = false,
+                                    error = result.message ?: "An unexpected error occurred",
+                                )
+                            }
+                            is Resource.Loading -> {
+                                _stateInsertId.value = _stateInsertId.value.copy(isLoading = true)
+                            }
+                            else -> {}
+                        }
+                    }.launchIn(viewModelScope)
+
+
+                }
+            }
             is MyEvent.CheckQrCode -> {
                 Log.d("TAG", "onEvent: called unsaved1 ")
                 Log.d("TAG", "onEvent: called unsaved2 ${event.barcode} ")

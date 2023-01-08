@@ -194,7 +194,7 @@ fun MainScreen(
                         horizontalArrangement = Arrangement.SpaceAround
                     ) {
                         Button(onClick = {
-                            navController.navigate(Screen.InsertMobileNumberScreen.route)},
+                            navController.navigate(Screen.InsertIdScreen.route)},
                             modifier = Modifier
                                 .padding(20.dp)
                                 .shadow(50.dp, shape = RoundedCornerShape(5.dp)),
@@ -210,7 +210,7 @@ fun MainScreen(
                             Spacer(modifier = Modifier.width(10.dp))
                         }
                         Button(onClick = {
-                            navController.navigate(Screen.InsertMobileNumberScreen.route)},
+                            navController.navigate(Screen.InsertIdScreen.route)},
                             modifier = Modifier
                                 .padding(20.dp)
                                 .shadow(50.dp, shape = RoundedCornerShape(5.dp)),

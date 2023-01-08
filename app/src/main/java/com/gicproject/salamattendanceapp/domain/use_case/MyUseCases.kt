@@ -9,5 +9,6 @@ data class MyUseCases(
     val addCustomerInput: AddCustomerInput,
     val getCustomerInput: GetCustomerInput,
     val getLocations: GetLocations,
-    val getClinics: GetClinics
+    val getClinics: GetClinics,
+    val getSendOtpCode: GetSendOtpCode,
 )

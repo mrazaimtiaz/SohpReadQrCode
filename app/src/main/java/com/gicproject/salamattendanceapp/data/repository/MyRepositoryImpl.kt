@@ -7,6 +7,7 @@ import com.gicproject.emojisurveyapp.domain.model.CustomerInput
 import com.gicproject.salamattendanceapp.data.data_source.MyDao
 import com.gicproject.salamattendanceapp.data.remote.MyApi
 import com.gicproject.salamattendanceapp.data.remote.dto.*
+import com.gicproject.salamattendanceapp.domain.model.CheckOtpSend
 import com.gicproject.salamattendanceapp.domain.model.CheckQrCodeSend
 import com.gicproject.salamattendanceapp.domain.model.CheckSend
 import com.gicproject.salamattendanceapp.domain.model.ResultClass
@@ -25,6 +26,11 @@ private const val TAG = "MyRepositoryImpl"
 class MyRepositoryImpl @Inject constructor(
     private val api: MyApi, private val dao: MyDao
 ): MyRepository {
+
+    override suspend fun sendOtp(checkOtpSend: CheckOtpSend): List<ResultClass>? {
+        return api.sendOtp(checkOtpSend)
+    }
+
     override suspend fun checkQrCode(checkQrCodeSend: CheckQrCodeSend): List<ResultClass>? {
         val jsonParams: MutableMap<String?, Any?> = ArrayMap()
         jsonParams["QRCode"] = checkQrCodeSend.QRCode?.trim()?.replace("\u0000","")
