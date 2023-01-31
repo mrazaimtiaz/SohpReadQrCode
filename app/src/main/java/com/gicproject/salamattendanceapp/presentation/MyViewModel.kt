@@ -319,8 +319,10 @@ class MyViewModel @Inject constructor(
 
                         val imageStream: InputStream? =
                             photoUri.value?.let { event.context.contentResolver.openInputStream(it) }
-                        val selectedImage = BitmapFactory.decodeStream(imageStream)
-                        val encodedImage: String = myEncodeImage(selectedImage)
+                        if(imageStream != null){
+                            val selectedImage = BitmapFactory.decodeStream(imageStream)
+                            val encodedImage: String = myEncodeImage(selectedImage)
+                        }
                         photoUri.value?.toFile()?.delete()
                         myUseCases.getAttendance(
                             CheckSend(deviceID = deviceId, secretKey = Constants.SECRETKEY,EmployeeNumber = event.id.toString(), time = currentTime),
