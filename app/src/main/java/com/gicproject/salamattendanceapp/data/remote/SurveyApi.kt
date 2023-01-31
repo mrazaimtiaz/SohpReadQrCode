@@ -1,10 +1,7 @@
 package com.gicproject.salamattendanceapp.data.remote
 
 import com.gicproject.salamattendanceapp.data.remote.dto.*
-import com.gicproject.salamattendanceapp.domain.model.CheckOtpSend
-import com.gicproject.salamattendanceapp.domain.model.CheckQrCodeSend
-import com.gicproject.salamattendanceapp.domain.model.CheckSend
-import com.gicproject.salamattendanceapp.domain.model.ResultClass
+import com.gicproject.salamattendanceapp.domain.model.*
 import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.Body
@@ -19,6 +16,13 @@ interface MyApi {
     suspend fun sendOtp(
         @Body checkOtpSend: CheckOtpSend
     ): List<ResultClass>?
+
+    @POST("api/PersonalInfoNew")
+    suspend fun personalInfoNew(
+        @Body checkPersonalInfoSend: CheckPersonalInfoSend
+    ): List<EmployeeDto>?
+
+
 
     @POST("api/CheckQrCode")
     suspend fun checkQrCode(

@@ -7,10 +7,7 @@ import com.gicproject.emojisurveyapp.domain.model.CustomerInput
 import com.gicproject.salamattendanceapp.data.data_source.MyDao
 import com.gicproject.salamattendanceapp.data.remote.MyApi
 import com.gicproject.salamattendanceapp.data.remote.dto.*
-import com.gicproject.salamattendanceapp.domain.model.CheckOtpSend
-import com.gicproject.salamattendanceapp.domain.model.CheckQrCodeSend
-import com.gicproject.salamattendanceapp.domain.model.CheckSend
-import com.gicproject.salamattendanceapp.domain.model.ResultClass
+import com.gicproject.salamattendanceapp.domain.model.*
 import com.gicproject.salamattendanceapp.domain.repository.MyRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -45,6 +42,10 @@ class MyRepositoryImpl @Inject constructor(
         Log.d(TAG, "checkQrCode: ${JSONObject(jsonParams)}")
         return api.checkQrCode(body)
       //  return api.checkQrCode(checkQrCodeSend)
+    }
+
+    override suspend fun personalInfo(checkPersonalInfoSend: CheckPersonalInfoSend): List<EmployeeDto>? {
+      return  api.personalInfoNew(checkPersonalInfoSend)
     }
 
     override suspend fun checkSend(checkSend: CheckSend,isCheckIn: Boolean): List<ResultClass>? {

@@ -11,4 +11,5 @@ data class MyUseCases(
     val getLocations: GetLocations,
     val getClinics: GetClinics,
     val getSendOtpCode: GetSendOtpCode,
+    val getEmployeeInfoCode: GetEmployeeInfoCode,
 )

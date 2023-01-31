@@ -7,4 +7,5 @@ data class InsertOtpScreenState(
     val isLoading: Boolean = false,
     val success: String = "",
     val error: String = "",
+    val employeeDto: EmployeeDto = EmployeeDto(),
 )

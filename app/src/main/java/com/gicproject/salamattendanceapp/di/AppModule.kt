@@ -75,7 +75,8 @@ class AppModule {
             submitAnswer = SubmitAnswer(repository = repository),
             getLocations = GetLocations(repository = repository),
             getClinics = GetClinics(repository = repository),
-            getSendOtpCode = GetSendOtpCode(repository = repository,dataStoreRepository = dataStoreRepository)
+            getSendOtpCode = GetSendOtpCode(repository = repository,dataStoreRepository = dataStoreRepository),
+            getEmployeeInfoCode = GetEmployeeInfoCode(repository = repository),
         )
     }
 }

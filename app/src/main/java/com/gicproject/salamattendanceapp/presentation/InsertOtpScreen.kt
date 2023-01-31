@@ -1,5 +1,6 @@
 package com.gicproject.salamattendanceapp.presentation
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -130,7 +131,7 @@ fun InsertOtpScreen(
             ) {
                 Spacer(modifier = Modifier.height(30.dp))
                 Text(
-                    text = "Please Insert OTP Send to your Mobile Number",
+                    text = "Please Insert OTP Sent to your Mobile Number",
                     color = MaterialTheme.colors.primary, fontSize = 35.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -291,10 +292,13 @@ fun InsertOtpScreen(
                             Button(onClick = {
                                 if (textMobileNumber.value.isNotBlank()) {
                                     if(textMobileNumber.value == resultClass?.MessageAr){
-                                        navController.currentBackStackEntry?.savedStateHandle?.set(
+                                        viewModel.onEvent(MyEvent.EmployeeInfoCode(resultClass.ID.toString()))
+                                       /* navController.currentBackStackEntry?.savedStateHandle?.set(
                                             Constants.STATE_EMPLOYEE_INFO, EmployeeDto(employeeNumber = resultClass.ID.toString())
                                         )
-                                        navController.navigate(Screen.UserInputScreen.route)
+                                        navController.navigate(Screen.UserInputScreen.route)*/
+                                    }else{
+                                        Toast.makeText(context, "Wrong OTP Code", Toast.LENGTH_SHORT)                         .show()
                                     }
                                 }
                             },
@@ -314,23 +318,25 @@ fun InsertOtpScreen(
                                 Spacer(modifier = Modifier.width(10.dp))
                             }
                         }
-                        if (state.error.isNotBlank()) {
-                            Text(state.error, color = MaterialTheme.colors.error)
-                        }
+                    }
+
+                    if (state.error.isNotBlank()) {
+                        Text(state.error, color = MaterialTheme.colors.error)
                     }
                 }
             }
-
             if(state.success.isNotBlank()){
                 LaunchedEffect(key1 = Unit, block = {
-                    showDialog.value = true
                     CoroutineScope(Dispatchers.Main).launch {
-                        delay(2000)
-                        navController.popBackStack(Screen.MainScreen.route,false)
+                        navController.currentBackStackEntry?.savedStateHandle?.set(
+                            Constants.STATE_EMPLOYEE_INFO, state.employeeDto
+                        )
+                        navController.navigate(Screen.UserInputScreen.route)
                     }
                 })
 
             }
+
 
 
             /* if (state.error.isNotBlank()) {

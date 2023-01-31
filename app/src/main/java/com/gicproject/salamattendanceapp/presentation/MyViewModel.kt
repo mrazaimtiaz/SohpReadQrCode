@@ -17,6 +17,7 @@ import com.gicproject.salamattendanceapp.common.Constants
 import com.gicproject.salamattendanceapp.common.Constants.Companion.KEY_DEVICE_ID
 import com.gicproject.salamattendanceapp.common.Resource
 import com.gicproject.salamattendanceapp.domain.model.CheckOtpSend
+import com.gicproject.salamattendanceapp.domain.model.CheckPersonalInfoSend
 import com.gicproject.salamattendanceapp.domain.model.CheckQrCodeSend
 import com.gicproject.salamattendanceapp.domain.model.CheckSend
 import com.gicproject.salamattendanceapp.domain.repository.DataStoreRepository
@@ -103,6 +104,8 @@ class MyViewModel @Inject constructor(
         _stateInsertOtp.value = InsertOtpScreenState()
     }
 
+
+
     fun initUserInput() {
         Log.d("TAG", "initUserInput: called")
         _shouldShowCamera.value = true
@@ -185,6 +188,39 @@ class MyViewModel @Inject constructor(
         
         Log.d("TAG", "onEvent: called unsaved")
         when (event) {
+            is MyEvent.EmployeeInfoCode -> {
+                Log.d("TAG", "onEvent: employeeId ${event.employeeId} ")
+                viewModelScope.launch {
+                    val deviceId = repository.getString(KEY_DEVICE_ID) ?: ""
+
+
+                    myUseCases.getEmployeeInfoCode(
+                        checkPersonalInfoSend = CheckPersonalInfoSend(deviceID = deviceId, employeeNumber = event.employeeId, secretKey = Constants.SECRETKEY)
+                    ).onEach { result ->
+                        when (result) {
+                            is Resource.Success -> {
+                                result.data?.let {
+                                    Log.d(TAG, "onEvent: getCheckQrCode success")
+                                    viewModelScope.launch {
+                                        _stateInsertOtp.value = _stateInsertOtp.value.copy(isLoading = false, success = "success", employeeDto = it)
+                                    }
+                                }
+                            }
+                            is Resource.Error -> {
+                                Log.d(TAG, "onEvent: getCheckQrCode failure")
+                                _stateInsertOtp.value = _stateInsertOtp.value.copy(
+                                    isLoading = false,
+                                    error = result.message ?: "An unexpected error occurred",
+                                )
+                            }
+                            is Resource.Loading -> {
+                                _stateInsertOtp.value = _stateInsertOtp.value.copy(isLoading = true)
+                            }
+                            else -> {}
+                        }
+                    }.launchIn(viewModelScope)
+                }
+            }
             is MyEvent.SendOtpCode -> {
                 Log.d("TAG", "onEvent: called unsaved1 ")
                 Log.d("TAG", "onEvent: called unsaved2 ${event.employeeCode} ")
@@ -198,7 +234,16 @@ class MyViewModel @Inject constructor(
                                 result.data?.let {
                                     Log.d(TAG, "onEvent: getCheckQrCode success")
                                     viewModelScope.launch {
-                                        _stateInsertId.value = _stateInsertId.value.copy(isLoading = false, success = "success", resultClass = it)
+                                        try{
+                                            it.ID = event.employeeCode.toInt()
+                                            _stateInsertId.value = _stateInsertId.value.copy(isLoading = false, success = "success", resultClass = it)
+                                        }catch (e: java.lang.Exception){
+                                            _stateInsertId.value = _stateInsertId.value.copy(
+                                                isLoading = false,
+                                                error = "Employee ID Should be Number (Integer)",
+                                            )
+                                        }
+
                                     }
                                 }
                             }

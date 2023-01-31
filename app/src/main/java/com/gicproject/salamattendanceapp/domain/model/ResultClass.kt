@@ -1,6 +1,7 @@
 package com.gicproject.salamattendanceapp.domain.model
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 
 data class ResultClass (
@@ -10,4 +11,4 @@ data class ResultClass (
     @SerializedName("Message_Ar" ) var MessageAr : String? = null,
     @SerializedName("EmployeeName" ) var EmployeeName : String? = null,
     @SerializedName("EmployeeCode" ) var EmployeeCode : String? = null,
-)
+): Serializable
