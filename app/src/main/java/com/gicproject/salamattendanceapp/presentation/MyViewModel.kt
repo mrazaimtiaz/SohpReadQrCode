@@ -350,9 +350,6 @@ class MyViewModel @Inject constructor(
                             }
                         }.launchIn(viewModelScope)
                     }
-
-
-
                 }
             }
         }
