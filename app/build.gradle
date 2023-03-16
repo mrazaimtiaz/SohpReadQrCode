@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace 'com.gicproject.salamattendanceapp'
+    namespace 'com.gicproject.sohpreadqrcode'
     compileSdk 32
 
     defaultConfig {
-        applicationId "com.gicproject.salamemployeeattendancetest"
+        applicationId "com.gicproject.sohpreadqrcode"
         minSdk 22
         targetSdk 32
         versionCode 1
@@ -73,6 +73,9 @@ dependencies {
     implementation "androidx.camera:camera-camera2:$camerax_version"
     implementation "androidx.camera:camera-lifecycle:$camerax_version"
     implementation "androidx.camera:camera-view:1.0.0-alpha27"
+
+
+    implementation files('libs/telpo_api.jar')
 
     // Zxing
     implementation 'com.google.zxing:core:3.3.3'
