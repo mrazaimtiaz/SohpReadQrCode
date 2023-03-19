@@ -3,8 +3,7 @@ package com.gicproject.sohpreadqrcode.domain.use_case
 
 import com.gicproject.sohpreadqrcode.common.Constants
 import com.gicproject.sohpreadqrcode.common.Resource
-import com.gicproject.sohpreadqrcode.data.remote.dto.EmployeeDto
-import com.gicproject.sohpreadqrcode.domain.model.CheckQrCodeSend
+import com.gicproject.sohpreadqrcode.domain.model.ResultClass
 import com.gicproject.sohpreadqrcode.domain.repository.DataStoreRepository
 import com.gicproject.sohpreadqrcode.domain.repository.MyRepository
 import kotlinx.coroutines.flow.Flow
@@ -16,22 +15,31 @@ import javax.inject.Inject
 
 class GetCheckQrCode @Inject constructor(
     private val repository: MyRepository,
-    private val dataStoreRepository: DataStoreRepository
 ) {
-    operator fun invoke(checkQrCodeSend: CheckQrCodeSend): Flow<Resource<EmployeeDto>> = flow {
+    operator fun invoke(appId: String): Flow<Resource<ResultClass>> = flow {
         try {
             emit(Resource.Loading())
-            val result = repository.checkQrCode(checkQrCodeSend)
+            val result = repository.checkQrCode(appId = appId)
             if(!result.isNullOrEmpty()){
-                if(result[0].status == 1){
-                    var emp = EmployeeDto(result[0].EmployeeCode,result[0].EmployeeName, departmentEn = "",iD = result[0].ID);
-                    if(emp.image.isNullOrEmpty()){
-                        emp.image = Constants.baseImage
+
+
+                when (result[0].Message) {
+                        "Updated" -> {
+                            emit(Resource.Success(result[0]))
+                        }
+                        "No Data" -> {
+                            emit(Resource.Error("${result[0].Message}: Appointment Not Found"))
+                        }
+                        "Error" -> {
+                            emit(Resource.Error("${result[0].Message}"))
+                        }
+                        else -> {
+                            emit(Resource.Error("${result[0].Message}"))
+                        }
                     }
-                    emit(Resource.Success(emp))
-                }else{
-                    emit(Resource.Error("${result[0].Message} \n ${result[0].MessageAr}"))
-                }
+
+
+
 
             }else{
                 emit(Resource.Error("Empty CheckQrCode List."))

@@ -5,10 +5,5 @@ import java.io.Serializable
 
 
 data class ResultClass (
-    @SerializedName("ID"         ) var ID        : Int?    = null,
-    @SerializedName("status"     ) var status    : Int?    = null,
-    @SerializedName("Message"    ) var Message   : String? = null,
-    @SerializedName("Message_Ar" ) var MessageAr : String? = null,
-    @SerializedName("EmployeeName" ) var EmployeeName : String? = null,
-    @SerializedName("EmployeeCode" ) var EmployeeCode : String? = null,
+    @SerializedName("return_msg"    ) var Message   : String? = null,
 ): Serializable

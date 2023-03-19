@@ -5,7 +5,6 @@ import android.content.Context
 import androidx.room.Room
 import com.gicproject.sohpreadqrcode.data.remote.MyApi
 import com.gicproject.sohpreadqrcode.common.Constants
-import com.gicproject.sohpreadqrcode.data.data_source.MyDatabase
 import com.gicproject.sohpreadqrcode.data.repository.DataStoreRepositoryImpl
 import com.gicproject.sohpreadqrcode.data.repository.MyRepositoryImpl
 import com.gicproject.sohpreadqrcode.domain.repository.DataStoreRepository
@@ -24,15 +23,6 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 class AppModule {
 
-    @Provides
-    @Singleton
-    fun provideMyDatabase(app: Application): MyDatabase {
-        return Room.databaseBuilder(
-            app,
-            MyDatabase::class.java,
-            MyDatabase.DATABASE_NAME
-        ).build()
-    }
 
     @Singleton
     @Provides
@@ -52,31 +42,19 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideMyRepository(api: MyApi, db: MyDatabase): MyRepository {
-        return MyRepositoryImpl(api = api, dao = db.myDao)
+    fun provideMyRepository(api: MyApi): MyRepository {
+        return MyRepositoryImpl(api = api)
     }
 
     @Provides
     @Singleton
     fun provideMyUseCases(
         repository: MyRepository,
-        dataStoreRepository: DataStoreRepository
     ): MyUseCases {
         return MyUseCases(
-            getCustomerInputs = GetCustomerInputs(repository),
-            deleteCustomerInput = DeleteCustomerInput(repository),
-            addCustomerInput = AddCustomerInput(repository),
-            getCustomerInput = GetCustomerInput(repository),
-            getAttendance = GetAttendance(repository = repository),
             getCheckQrCode = GetCheckQrCode(
                 repository = repository,
-                dataStoreRepository = dataStoreRepository
             ),
-            submitAnswer = SubmitAnswer(repository = repository),
-            getLocations = GetLocations(repository = repository),
-            getClinics = GetClinics(repository = repository),
-            getSendOtpCode = GetSendOtpCode(repository = repository,dataStoreRepository = dataStoreRepository),
-            getEmployeeInfoCode = GetEmployeeInfoCode(repository = repository),
         )
     }
 }

@@ -39,6 +39,19 @@ fun MainScreen(
 ) {
     val state = viewModel.stateMain.value
 
+    val kwlogo = R.drawable.kwlogo
+
+
+    val accreditedlogo = R.drawable.accreditedlogo
+
+    val sohpenlogo =R.drawable.sohpenlogo
+
+    val sohparlogo = R.drawable.sohparlogo
+
+
+
+     val imagelogo = remember{ mutableStateOf(sohparlogo)}
+
 /*    LaunchedEffect(Unit) {
         delay(5000)
         navController.navigate(Screen.UserInputScreen.route)
@@ -48,10 +61,24 @@ fun MainScreen(
     if (state.success.isNotBlank()) {
         LaunchedEffect(Unit) {
             navController.currentBackStackEntry?.savedStateHandle?.set(
-                Constants.STATE_EMPLOYEE_INFO, state.employeeInfo
+                Constants.STATE_IS_SUCCESS, true
             )
-           navController.navigate(Screen.EmployeeInfoScreen.route)
+            navController.currentBackStackEntry?.savedStateHandle?.set(
+                Constants.STATE_MSG, state.success
+            )
+           navController.navigate(Screen.MessageInfoScreen.route)
       }
+    }
+    if (state.error.isNotBlank()) {
+        LaunchedEffect(Unit) {
+            navController.currentBackStackEntry?.savedStateHandle?.set(
+                Constants.STATE_IS_SUCCESS, false
+            )
+            navController.currentBackStackEntry?.savedStateHandle?.set(
+                Constants.STATE_MSG, state.error
+            )
+            navController.navigate(Screen.MessageInfoScreen.route)
+        }
     }
 
 
@@ -77,11 +104,11 @@ fun MainScreen(
                 verticalAlignment = Alignment.Top
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.img),
-                    contentScale = ContentScale.Crop,
+                    painter = painterResource(id = imagelogo.value ),
+                    contentScale = ContentScale.Fit,
                     modifier = Modifier
-                        .width(290.dp)
-                        .height(65.dp)
+                        .width(100.dp)
+                        .height(55.dp)
                         .pointerInput(Unit) {
                             detectDragGestures { change, _ ->
                                 if (change.position.y > 400) {
@@ -104,24 +131,22 @@ fun MainScreen(
                 ) {
                     Row(
                         horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
                     ){
-                        var color =  MaterialTheme.colors.primary
-                        Box() {
-                            Box(
-                                modifier = Modifier
-                                    .clip(CircleShape)
-                                    .background(color = color),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text("  1  ",
-                                    modifier= Modifier.padding(0.dp),
-                                    color = Color.White, fontSize =40.sp,
-                                    fontWeight = FontWeight.Bold)
-                            }
 
-                        }
-                        Spacer(modifier = Modifier.width(50.dp))
-                        if(state.error.isNotBlank()){
+                        Text(
+                            text = "Please Scan a QR code to print Appointment",
+                            textAlign = TextAlign.Center,
+                            color = MaterialTheme.colors.primary, fontSize = 25.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ){
+                     /*   if(state.error.isNotBlank()){
                             val context =  LocalContext.current
                             LaunchedEffect(key1 = true ){
                                 Toast.makeText(
@@ -131,114 +156,26 @@ fun MainScreen(
                                 ).show()
                                 viewModel.emptyToast()
                             }
-                        }
+                        }*/
                         Text(
-                            text = "${state.error} Please Scan a QR code",
-                            color = MaterialTheme.colors.primary, fontSize = 40.sp,
+                            text = "يرجى مسح رمز الاستجابة السريعة ضوئيًا لطباعة الموعد",
+                            textAlign = TextAlign.Center,
+                            color = MaterialTheme.colors.primary, fontSize = 25.sp,
                             fontWeight = FontWeight.Bold
                         )
                     }
                     Spacer(modifier = Modifier.height(10.dp))
                     Image(
                         painter = painterResource(id = R.drawable.sampleqrcode),
-                        modifier = Modifier.size(200.dp),
+                        modifier = Modifier.size(150.dp),
                         contentDescription = "qrcode sample"
                     )
                     Spacer(modifier = Modifier.height(10.dp))
-                    Text(
-                        text = "OR",
-                        color = Color.Black, fontSize = 60.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Row(
-                    ){
-                        var color =  MaterialTheme.colors.primary
-                        Box() {
-                            Box(
-                                modifier = Modifier
-                                    .clip(CircleShape)
-                                    .background(color = color),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text("  2  ",
-                                    modifier= Modifier.padding(0.dp),
-                                    color = Color.White, fontSize =40.sp,
-                                    fontWeight = FontWeight.Bold)
-                            }
-
-                        }
-                        Spacer(modifier = Modifier.width(50.dp))
-                        Text(
-                            text = "Send OTP to your Mobile Number",
-                            color = MaterialTheme.colors.primary, fontSize = 40.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = " / ",
-                            color =Color.Black, fontSize = 40.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                                text = "Use PIN Code",
-                        color = MaterialTheme.colors.primaryVariant, fontSize = 40.sp,
-                        fontWeight = FontWeight.Bold
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceAround
-                    ) {
-                        Button(onClick = {
-                            navController.navigate(Screen.InsertIdScreen.route)},
-                            modifier = Modifier
-                                .padding(20.dp)
-                                .shadow(50.dp, shape = RoundedCornerShape(5.dp)),
-                            shape = RoundedCornerShape(30.dp),
-                        ) {
-                            Icon(
-                                Icons.Default.Send,
-                                contentDescription = "",
-                                modifier = Modifier.size(50.dp)
-                            )
-                            Spacer(modifier = Modifier.width(20.dp))
-                            Text("Send OTP",  fontSize = 30.sp)
-                            Spacer(modifier = Modifier.width(10.dp))
-                        }
-                        Button(onClick = {
-                            navController.navigate(Screen.InsertIdScreen.route)},
-                            modifier = Modifier
-                                .padding(20.dp)
-                                .shadow(50.dp, shape = RoundedCornerShape(5.dp)),
-                            colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.primaryVariant),
-                            shape = RoundedCornerShape(30.dp),
-                        ) {
-                            Icon(
-                                Icons.Default.Send,
-                                contentDescription = "",
-                                modifier = Modifier.size(50.dp)
-                            )
-                            Spacer(modifier = Modifier.width(20.dp))
-                            Text("PIN Code",  fontSize = 30.sp)
-                            Spacer(modifier = Modifier.width(10.dp))
-                        }
-                    }
 
                     if(state.isLoading){
                         CircularProgressIndicator()
                     }
-                    if(state.error.isNotBlank()){
-                        val context =  LocalContext.current
-                        LaunchedEffect(key1 = true ){
-                            Toast.makeText(
-                                context,
-                                state.error,
-                                Toast.LENGTH_LONG
-                            ).show()
-                            viewModel.emptyToast()
-                        }
-                    }
+
                     }
                 }
                 /*Column(
@@ -268,11 +205,24 @@ fun MainScreen(
     val minute = remember { mutableStateOf(0) }
     val second = remember { mutableStateOf(0) }
     val am_pm = remember { mutableStateOf(0) }
+
+    LaunchedEffect(key1 = Unit, block = {
+        while (true) {
+            delay(4000)
+            when (imagelogo.value) {
+                sohparlogo -> imagelogo.value = sohpenlogo
+                sohpenlogo -> imagelogo.value = accreditedlogo
+                accreditedlogo -> imagelogo.value = kwlogo
+                kwlogo -> imagelogo.value = sohparlogo
+            }
+        }
+    })
     LaunchedEffect(key1 = Unit, block = {
         while (true) {
             delay(100)
             setTimes(hour, minute, second,am_pm)
         }
+
     })
     WallClock(hour.value,
         minute.value,
@@ -317,7 +267,7 @@ fun WallClock(hour: Int, minute: Int, second: Int,am_pm: Int, modifier: Modifier
         am_pmString = "PM"
     }
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.Top) {
-        Text(text = "$hourString$hour:$minuteString$minute:$secondString$second $am_pmString", color = MaterialTheme.colors.primary, fontSize = 35.sp, textAlign = TextAlign.End, modifier = Modifier.padding(10.dp))
+        Text(text = "$hourString$hour:$minuteString$minute:$secondString$second $am_pmString", color = MaterialTheme.colors.primary, fontSize = 18.sp, textAlign = TextAlign.End, modifier = Modifier.padding(10.dp))
     }
 }
 

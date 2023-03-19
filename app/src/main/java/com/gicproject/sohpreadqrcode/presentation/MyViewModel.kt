@@ -12,17 +12,13 @@ import androidx.lifecycle.viewModelScope
 import com.gicproject.sohpreadqrcode.common.Constants
 import com.gicproject.sohpreadqrcode.common.Constants.Companion.KEY_DEVICE_ID
 import com.gicproject.sohpreadqrcode.common.Resource
-import com.gicproject.sohpreadqrcode.domain.model.CheckOtpSend
-import com.gicproject.sohpreadqrcode.domain.model.CheckPersonalInfoSend
-import com.gicproject.sohpreadqrcode.domain.model.CheckQrCodeSend
 import com.gicproject.sohpreadqrcode.domain.repository.DataStoreRepository
 import com.gicproject.sohpreadqrcode.domain.use_case.MyUseCases
+import com.telpo.tps550.api.printer.UsbThermalPrinter
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
@@ -37,17 +33,10 @@ class MyViewModel @Inject constructor(
     val repository: DataStoreRepository
 ) : ViewModel() {
 
-    private val _resetScreens = mutableStateOf(false)
-    val resetScreens: State<Boolean> = _resetScreens
 
     private val _isDarkTheme = mutableStateOf(false)
     val isDarkTheme: State<Boolean> = _isDarkTheme
 
-    private val _stateInsertOtp = mutableStateOf(InsertOtpScreenState())
-    val stateInsertOtp: State<InsertOtpScreenState> = _stateInsertOtp
-
-    private val _stateInsertId = mutableStateOf(InsertIdScreenState())
-    val stateInsertId: State<InsertIdScreenState> = _stateInsertId
 
     private val _stateMain = mutableStateOf(MainScreenState())
     val stateMain: State<MainScreenState> = _stateMain
@@ -91,13 +80,6 @@ class MyViewModel @Inject constructor(
         _stateMain.value = MainScreenState()
     }
 
-    fun initInsertId(){
-        _stateInsertId.value = InsertIdScreenState()
-    }
-
-    fun initInsertOtp(){
-        _stateInsertOtp.value = InsertOtpScreenState()
-    }
 
 
 
@@ -140,24 +122,72 @@ class MyViewModel @Inject constructor(
         _shouldShowPhoto.value = value
     }
 
-    fun showUserInputScreen(barcode: String) {
-        Log.d(TAG, "showUserInputScreen barcode: $barcode")
-        onEvent(MyEvent.CheckQrCode(barcode = barcode))
+    fun checkQrCode(appId: String) {
+        Log.d(TAG, "showUserInputScreen appId: $appId")
+        onEvent(MyEvent.CheckQrCode(appId = appId))
 
     }
 
-    fun showEmployeeInfoScreen(isCheckIn: Boolean,context: Context,employeeId: String) {
-        //_photoUri
-        val iStream: InputStream? = _photoUri.value?.let {
-            context.contentResolver.openInputStream(
-                it
-            )
-        }
-        val inputData: ByteArray? = iStream?.let { getBytes(it) }
-        viewModelScope.launch {
-            onEvent(MyEvent.GetAttendance(isCheckIn = isCheckIn,id = employeeId,context))
-        }
+    fun setErrorMessageToMainScreen(message: String){
+        _stateMain.value = _stateMain.value.copy(
+            isLoading = false,
+            error = message,
+        )
+
     }
+
+
+
+
+    private var mPrinter: UsbThermalPrinter? = null
+    private var mContext: Context? = null
+
+    fun initPrinter(printer: UsbThermalPrinter?, context: Context){
+        mPrinter = printer
+        mContext = context
+    }
+
+    fun  funcPrinterConnect(name: String){
+        CoroutineScope(Dispatchers.IO).launch {
+
+
+            try {
+                mPrinter?.reset()
+                mPrinter?.setAlgin(UsbThermalPrinter.ALGIN_MIDDLE)
+
+                mPrinter?.setGray(5)
+                //  mPrinter?.setLineSpace(5)
+                /*    val bitmap = CreateCode(
+                        name,
+                        BarcodeFormat.CODE_128,
+                        320,
+                        176
+                    )*/
+                /*   if (bitmap != null) {
+                       mPrinter?.printLogo(bitmap, true)
+                   }*/
+                //  mPrinter?.setGray(5)
+
+
+
+                mPrinter?.setBold(true)
+
+                mPrinter?.setTextSize(25)
+                mPrinter?.addString(
+                    """${name} """.trimIndent()
+                )
+
+                mPrinter?.printString()
+                mPrinter?.walkPaper(20)
+
+                mPrinter?.reset()
+            } catch (e: java.lang.Exception) {
+                e.printStackTrace()
+            }
+        }
+
+    }
+
 
     @Throws(IOException::class)
     fun getBytes(inputStream: InputStream): ByteArray {
@@ -180,105 +210,23 @@ class MyViewModel @Inject constructor(
         return encImage;
     }
     fun onEvent(event: MyEvent) {
-        
-        Log.d("TAG", "onEvent: called unsaved")
+
         when (event) {
-            is MyEvent.EmployeeInfoCode -> {
-                Log.d("TAG", "onEvent: employeeId ${event.employeeId} ")
-                viewModelScope.launch {
-                    val deviceId = repository.getString(KEY_DEVICE_ID) ?: ""
-
-
-                    myUseCases.getEmployeeInfoCode(
-                        checkPersonalInfoSend = CheckPersonalInfoSend(deviceID = deviceId, employeeNumber = event.employeeId, secretKey = Constants.SECRETKEY)
-                    ).onEach { result ->
-                        when (result) {
-                            is Resource.Success -> {
-                                result.data?.let {
-                                    Log.d(TAG, "onEvent: getCheckQrCode success")
-                                    viewModelScope.launch {
-                                        _stateInsertOtp.value = _stateInsertOtp.value.copy(isLoading = false, success = "success", employeeDto = it)
-                                    }
-                                }
-                            }
-                            is Resource.Error -> {
-                                Log.d(TAG, "onEvent: getCheckQrCode failure")
-                                _stateInsertOtp.value = _stateInsertOtp.value.copy(
-                                    isLoading = false,
-                                    error = result.message ?: "An unexpected error occurred",
-                                )
-                            }
-                            is Resource.Loading -> {
-                                _stateInsertOtp.value = _stateInsertOtp.value.copy(isLoading = true)
-                            }
-                            else -> {}
-                        }
-                    }.launchIn(viewModelScope)
-                }
-            }
-            is MyEvent.SendOtpCode -> {
-                Log.d("TAG", "onEvent: called unsaved1 ")
-                Log.d("TAG", "onEvent: called unsaved2 ${event.employeeCode} ")
-                viewModelScope.launch {
-                    val deviceId = repository.getString(KEY_DEVICE_ID) ?: ""
-                    myUseCases.getSendOtpCode(
-                        checkOtpSend = CheckOtpSend(deviceID = deviceId, employeeCode = event.employeeCode, secretKey = Constants.SECRETKEY)
-                    ).onEach { result ->
-                        when (result) {
-                            is Resource.Success -> {
-                                result.data?.let {
-                                    Log.d(TAG, "onEvent: getCheckQrCode success")
-                                    viewModelScope.launch {
-                                        try{
-                                            it.ID = event.employeeCode.toInt()
-                                            _stateInsertId.value = _stateInsertId.value.copy(isLoading = false, success = "success", resultClass = it)
-                                        }catch (e: java.lang.Exception){
-                                            _stateInsertId.value = _stateInsertId.value.copy(
-                                                isLoading = false,
-                                                error = "Employee ID Should be Number (Integer)",
-                                            )
-                                        }
-
-                                    }
-                                }
-                            }
-                            is Resource.Error -> {
-                                Log.d(TAG, "onEvent: getCheckQrCode failure")
-                                _stateInsertId.value = _stateInsertId.value.copy(
-                                    isLoading = false,
-                                    error = result.message ?: "An unexpected error occurred",
-                                )
-                            }
-                            is Resource.Loading -> {
-                                _stateInsertId.value = _stateInsertId.value.copy(isLoading = true)
-                            }
-                            else -> {}
-                        }
-                    }.launchIn(viewModelScope)
-
-
-                }
-            }
             is MyEvent.CheckQrCode -> {
-                Log.d("TAG", "onEvent: called unsaved1 ")
-                Log.d("TAG", "onEvent: called unsaved2 ${event.barcode} ")
+                Log.d("TAG", "onEvent: called unsaved2 ${event.appId} ")
                 viewModelScope.launch {
                     val deviceId = repository.getString(KEY_DEVICE_ID) ?: ""
                     myUseCases.getCheckQrCode(
-                        checkQrCodeSend = CheckQrCodeSend(deviceID = deviceId, QRCode = event.barcode, secretKey = Constants.SECRETKEY)
+                        appId = event.appId
                     ).onEach { result ->
                         when (result) {
                             is Resource.Success -> {
                                 result.data?.let {
                                     Log.d(TAG, "onEvent: getCheckQrCode success")
-                                    _resetScreens.value = true
                                     viewModelScope.launch {
                                         delay(100)
-                                        _resetScreens.value = false
+                                        _stateMain.value = _stateMain.value.copy(isLoading = false, success = it.Message ?: "Empty Message",)
 
-                                        _stateMain.value = _stateMain.value.copy(isLoading = false, success = "success", employeeInfo = it)
-
-                                        // _stateMain.value = MainScreenState(success = "success")
                                     }
                                 }
                             }
@@ -299,9 +247,7 @@ class MyViewModel @Inject constructor(
 
                 }
             }
-            is MyEvent.GetAttendance -> {
 
-            }
         }
 
 

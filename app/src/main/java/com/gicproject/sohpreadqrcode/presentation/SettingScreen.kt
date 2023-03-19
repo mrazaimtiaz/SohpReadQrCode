@@ -2,6 +2,7 @@ package com.gicproject.sohpreadqrcode.presentation
 
 import android.content.Context
 import android.content.Intent
+import android.location.Location
 import android.provider.Settings
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -21,7 +22,6 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavController
-import com.gicproject.emojisurveyapp.domain.model.Location
 import com.gicproject.sohpreadqrcode.R
 import com.gicproject.sohpreadqrcode.Screen
 
@@ -73,7 +73,9 @@ fun SettingScreen(
                         .padding(top = 40.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-
+                    Button(onClick = { viewModel.funcPrinterConnect("test print") }) {
+                        Text("print test")
+                    }
                     IntentToSetting(context)
                 }
             }
@@ -127,7 +129,7 @@ fun ComposeMenu(
         ) {
             val (label, iconView) = createRefs()
             Text(
-                text = if (selectedIndex != -1) menuItems[selectedIndex].Name.toString() else "Select Location",
+                text = if (selectedIndex != -1) menuItems[selectedIndex].toString() else "Select Location",
                 color = Color.Black,
                 modifier = Modifier
                     .constrainAs(label) {
@@ -166,7 +168,7 @@ fun ComposeMenu(
                         onClick = {
                             onMenuItemClick(index, item)
                         }) {
-                        Text(text = item.Name.toString())
+                        Text(text = item.toString())
                     }
                 }
             }
