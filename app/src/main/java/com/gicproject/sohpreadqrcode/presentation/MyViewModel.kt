@@ -2,6 +2,8 @@ package com.gicproject.sohpreadqrcode.presentation
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.media.AudioManager
+import android.media.ToneGenerator
 import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.State
@@ -81,7 +83,12 @@ class MyViewModel @Inject constructor(
     }
 
 
-
+    var streamType = AudioManager.STREAM_DTMF
+    var toneGenerator: ToneGenerator? = ToneGenerator(streamType, 100)
+    fun beep() {
+        val toneType = ToneGenerator.TONE_PROP_BEEP
+        toneGenerator?.startTone(toneType)
+    }
 
     fun initUserInput() {
         Log.d("TAG", "initUserInput: called")

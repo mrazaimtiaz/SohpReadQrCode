@@ -240,6 +240,7 @@ class MainActivity : ComponentActivity() {
         var currentTimeMills = System.currentTimeMillis()
 
         if((currentTimeMills - time) > 2000){
+            viewModel?.beep()
             Log.d("TAG", "checkCodetimemills: ${currentTimeMills - time}")
             time =  System.currentTimeMillis()
             var list =   qrCode.split("-----")
@@ -256,14 +257,14 @@ class MainActivity : ComponentActivity() {
                 val currentTime = Calendar.getInstance().time
                 val diffInMs: Long = currentTime.time - barcodeDate.time
 
-                val diffInSec: Long = TimeUnit.MILLISECONDS.toSeconds(diffInMs)
+               // val diffInSec: Long = TimeUnit.MILLISECONDS.toSeconds(diffInMs)
 
 
               //  if(diffInSec > 65){
                  //   Log.d("TAG", "onCreate:diif sec $diffInSec")
                //     viewModel?.setErrorMessageToMainScreen("Qr Code is Expired! Please Generate Again and try again")
             //    }else{
-                    Log.d("TAG", "onCreate:diif sec1 $diffInSec")
+                //    Log.d("TAG", "onCreate:diif sec1 $diffInSec")
                     viewModel?.checkQrCode(list[0])
               //  }
 

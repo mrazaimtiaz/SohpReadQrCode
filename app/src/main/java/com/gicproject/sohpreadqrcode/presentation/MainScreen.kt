@@ -135,7 +135,7 @@ fun MainScreen(
                     ){
 
                         Text(
-                            text = "Please Scan a QR code to print Appointment",
+                            text = "Please Scan a QR code",
                             textAlign = TextAlign.Center,
                             color = MaterialTheme.colors.primary, fontSize = 25.sp,
                             fontWeight = FontWeight.Bold
@@ -158,7 +158,7 @@ fun MainScreen(
                             }
                         }*/
                         Text(
-                            text = "يرجى مسح رمز الاستجابة السريعة ضوئيًا لطباعة الموعد",
+                            text = "يرجى مسح رمز الاستجابة السريعة ضوئيًا",
                             textAlign = TextAlign.Center,
                             color = MaterialTheme.colors.primary, fontSize = 25.sp,
                             fontWeight = FontWeight.Bold
