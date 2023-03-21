@@ -24,6 +24,8 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavController
 import com.gicproject.sohpreadqrcode.R
 import com.gicproject.sohpreadqrcode.Screen
+import com.gicproject.sohpreadqrcode.common.Constants
+import com.gicproject.sohpreadqrcode.common.toBitmap
 
 @Composable
 fun SettingScreen(
@@ -73,7 +75,10 @@ fun SettingScreen(
                         .padding(top = 40.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Button(onClick = { viewModel.funcPrinterConnect("test print") }) {
+                    Button(onClick = {
+//viewModel.funcPrinterConnect("test print")
+                        viewModel.funcPrinterImage(Constants.baseImage.toBitmap())
+                        }) {
                         Text("print test")
                     }
                     IntentToSetting(context)

@@ -161,7 +161,7 @@ fun MainScreen(
                             }
                         }*/
                         Text(
-                            text = "يرجى مسح رمز الاستجابة السريعة ضوئيًا",
+                        text = "QR Code يرجى مسح",
                             textAlign = TextAlign.Center,
                             fontFamily = FontFamily(Font(R.font.ge_bold)),
                             color = MaterialTheme.colors.primary, fontSize = 25.sp,

@@ -23,6 +23,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.gicproject.sohpreadqrcode.common.Constants
+import com.gicproject.sohpreadqrcode.common.toBitmap
 import com.gicproject.sohpreadqrcode.presentation.MainScreen
 import com.gicproject.sohpreadqrcode.presentation.MessageInfoScreen
 import com.gicproject.sohpreadqrcode.presentation.MyViewModel
@@ -58,7 +59,7 @@ class MainActivity : ComponentActivity() {
 
 
 
-    var mUsbThermalPrinter = UsbThermalPrinter(this@MainActivity)
+    var mUsbThermalPrinter:  UsbThermalPrinter? = UsbThermalPrinter(this@MainActivity)
 
     val PRT_TAG = "com.print.service.printservice"
   /*  //working barcode
@@ -96,7 +97,7 @@ class MainActivity : ComponentActivity() {
         val intent = Intent(PRT_TAG)
         intent.setPackage(packageName)
         intent.component = ComponentName("com.print.service", "com.print.service.printservice")
-       // setupPrinter()
+        setupPrinter()
 
         initSerial("/dev/ttyACM0")
         stringBuilder = java.lang.StringBuilder()
@@ -108,6 +109,7 @@ class MainActivity : ComponentActivity() {
 
        CoroutineScope(Dispatchers.IO).launch {
            delay(3000)
+
            readScan()
        }
         setContent {
@@ -121,20 +123,30 @@ class MainActivity : ComponentActivity() {
                 intentFilter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED)
                 mUsbBroadCastReceiver = UsbBroadCastReceiver()
                 registerReceiver(mUsbBroadCastReceiver, intentFilter)
-            //    viewModel?.initPrinter(mUsbThermalPrinter, this@MainActivity)
+                viewModel?.initPrinter(mUsbThermalPrinter, this@MainActivity)
 
             }
 
             val darkTheme = viewModel!!.isDarkTheme.value
             val systemUiController = rememberSystemUiController()
-           // systemUiController.isSystemBarsVisible = false
+
+           /* LaunchedEffect(Unit) {
+                while (true) {
+
+                   // delay(1000L)
+                    systemUiController.isSystemBarsVisible = false
+                    systemUiController.isNavigationBarVisible = false
+                    systemUiController.isStatusBarVisible = false
+                }
+            }*/
+
 
             //test
-          /*  LaunchedEffect(Unit) {
+           /* LaunchedEffect(Unit) {
                 while(true){
 
                     delay(1000L)
-                    checkCode("E652AED2-3EF5-40C1-8244-884FB070C9B4-----2023-03-19 11:48:55")
+                    checkCode("E652AED2-3EF5-40C1-8244-884FB070C9B4-----sohpid")
                 }
 
             }*/
@@ -240,7 +252,7 @@ class MainActivity : ComponentActivity() {
     }
 
     var time =    System.currentTimeMillis()
-    fun checkCode(qrCode: String){
+    suspend fun checkCode(qrCode: String){
         var currentTimeMills = System.currentTimeMillis()
 
         if((currentTimeMills - time) > 2000){
@@ -248,6 +260,10 @@ class MainActivity : ComponentActivity() {
             Log.d("TAG", "checkCodetimemills: ${currentTimeMills - time}")
             time =  System.currentTimeMillis()
             var list =   qrCode.split("-----")
+
+             //   viewModel?.funcPrinterImage(Constants.baseImage.toBitmap())
+
+
             if(list.size > 1){
 
                 Log.d("TAG", "readScan: ${list[0]}   ${list[1]}")
@@ -270,6 +286,7 @@ class MainActivity : ComponentActivity() {
             //    }else{
                 //    Log.d("TAG", "onCreate:diif sec1 $diffInSec")
             //    Toast.makeText(this,qrCode,Toast.LENGTH_LONG).show()
+
                 if(timeOrText.trim() == "sohpid"){
                     viewModel?.checkQrCode(list[0])
                   //  viewModel?.setErrorMessageToMainScreen("updad")
@@ -302,7 +319,7 @@ class MainActivity : ComponentActivity() {
     override fun onStop() {
         super.onStop()
         unregisterReceiver(printReceive)
-       mUsbThermalPrinter.stop()
+       mUsbThermalPrinter?.stop()
         try {
             if (inputStream != null) {
                 inputStream!!.close()
@@ -339,9 +356,9 @@ class MainActivity : ComponentActivity() {
         Thread {
             try {
                 //mUsbThermalPrinter.start(0);
-                mUsbThermalPrinter.start(1)
-                mUsbThermalPrinter.reset()
-                printVersion = mUsbThermalPrinter.version
+                mUsbThermalPrinter?.start(1)
+                mUsbThermalPrinter?.reset()
+                printVersion = mUsbThermalPrinter?.version
 
                 viewModel?.initPrinter(mUsbThermalPrinter, this@MainActivity)
             } catch (e: TelpoException) {
@@ -354,7 +371,7 @@ class MainActivity : ComponentActivity() {
                         dialog!!.dismiss()
                         Toast.makeText(
                             this@MainActivity,
-                            "${PRINTVERSION.toString()} 1",
+                            "Printer Intialized",
                             Toast.LENGTH_LONG
                         ).show()
                     }

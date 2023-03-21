@@ -2,16 +2,16 @@ package com.gicproject.sohpreadqrcode.presentation
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.media.AudioManager
 import android.media.ToneGenerator
 import android.net.Uri
+import android.os.Environment
 import android.util.Log
 import androidx.compose.runtime.State
-
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gicproject.sohpreadqrcode.common.Constants
 import com.gicproject.sohpreadqrcode.common.Constants.Companion.KEY_DEVICE_ID
 import com.gicproject.sohpreadqrcode.common.Resource
 import com.gicproject.sohpreadqrcode.domain.repository.DataStoreRepository
@@ -22,6 +22,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.IOException
 import java.io.InputStream
 import java.util.*
@@ -154,6 +155,85 @@ class MyViewModel @Inject constructor(
         mContext = context
     }
 
+    fun funcPrinterImage(bitmap: Bitmap) {
+        CoroutineScope(Dispatchers.IO).launch {
+            Log.d(TAG, "funcPrinterImage: called ")
+
+
+            //  io = UsbNativeAPI()
+
+
+
+            try {
+                //bitmap print
+                // mPrinter!!.setPrintColorSize(4)
+                //   mPrinter!!.printString("Picture test printing:\n")
+                //  mPrinter!!.printFeed()
+
+                //   mPrinter!!.printString("Picture test printing:\n")
+                // mPrinter!!.printFeed()
+                val cx = bitmap.width / 2f
+                val cy = bitmap.height / 2f
+                //   val bitmap90 =  bitmap.rotate(90f)
+                //  val bitmap180 =  bitmap.rotate(180f)
+
+
+
+
+                CoroutineScope(Dispatchers.IO).launch {
+
+
+                    try {
+                        mPrinter?.reset()
+                        mPrinter?.setAlgin(UsbThermalPrinter.ALGIN_MIDDLE)
+
+                        //mPrinter?.setGray(5)
+
+
+                        mPrinter?.printLogo(bitmap,false)
+                      //  mPrinter?.paperCut()
+
+                       /* val picturePath =
+                            Environment.getExternalStorageDirectory().absolutePath + "/111.bmp"
+                        val file: File = File(picturePath)
+                        if (file.exists()) {
+                            mPrinter?.printLogo(
+                                BitmapFactory.decodeFile(picturePath),
+                                false
+                            )
+                          //  mPrinter?.walkPaper(20)
+                        }*/
+                     //   mPrinter?.setBold(true)
+
+                    //    mPrinter?.setTextSize(25)
+
+
+                      //  mPrinter?.printString()
+                    //    mPrinter?.walkPaper(20)
+
+                        mPrinter?.reset()
+                    } catch (e: java.lang.Exception) {
+                        e.printStackTrace()
+                    }
+                }
+
+
+
+            } catch (e: java.lang.Exception) {
+                e.printStackTrace()
+
+              var  result = e.toString()
+                if (result == "com.common.print.error.NoPaperException") {
+                    setErrorMessageToMainScreen("No Paper")
+                } else if (result == "com.common.print.error.OverHeatException") {
+                    setErrorMessageToMainScreen("Overheat")
+                } else {
+                    setErrorMessageToMainScreen("Error: $result")
+                }
+            }
+        }
+    }
+
     fun  funcPrinterConnect(name: String){
         CoroutineScope(Dispatchers.IO).launch {
 
@@ -232,7 +312,11 @@ class MyViewModel @Inject constructor(
                                     Log.d(TAG, "onEvent: getCheckQrCode success")
                                     viewModelScope.launch {
                                         delay(100)
-                                        _stateMain.value = _stateMain.value.copy(isLoading = false, success = it.Message ?: "Empty Message",)
+                                        //      bitmap = service.ServicesLogo!!.toBitmap().asImageBitmap()
+                                        _stateMain.value = _stateMain.value.copy(
+                                            isLoading = false,
+                                            success = it.Message ?: "Empty Message"
+                                        )
 
                                     }
                                 }
