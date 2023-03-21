@@ -7,11 +7,11 @@
         <deviceKey>
           <Key>
             <type value="VIRTUAL_DEVICE_PATH" />
-            <value value="$USER_HOME$/.android/avd/prodvx_10_API_31.avd" />
+            <value value="$USER_HOME$/.android/avd/telpo_qualcom_API_31.avd" />
           </Key>
         </deviceKey>
       </Target>
     </targetSelectedWithDropDown>
-    <timeTargetWasSelectedWithDropDown value="2023-01-16T10:31:18.092727Z" />
+    <timeTargetWasSelectedWithDropDown value="2023-03-21T05:01:50.181977Z" />
   </component>
 </project>

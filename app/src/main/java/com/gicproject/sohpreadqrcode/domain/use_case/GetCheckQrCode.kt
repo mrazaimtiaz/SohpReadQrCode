@@ -31,7 +31,7 @@ class GetCheckQrCode @Inject constructor(
                             emit(Resource.Error("${result[0].Message}: Appointment Not Found"))
                         }
                         "Error" -> {
-                            emit(Resource.Error("${result[0].Message}"))
+                            emit(Resource.Error("${result[0].Message}: Api Connection"))
                         }
                         else -> {
                             emit(Resource.Error("${result[0].Message}"))

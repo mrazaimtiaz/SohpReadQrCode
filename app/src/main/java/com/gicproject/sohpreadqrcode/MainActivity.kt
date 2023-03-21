@@ -113,6 +113,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             viewModel = hiltViewModel()
 
+
+
             if (mUsbBroadCastReceiver == null) {
                 val intentFilter = IntentFilter()
                 intentFilter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED)
@@ -125,6 +127,7 @@ class MainActivity : ComponentActivity() {
 
             val darkTheme = viewModel!!.isDarkTheme.value
             val systemUiController = rememberSystemUiController()
+           // systemUiController.isSystemBarsVisible = false
 
             //test
           /*  LaunchedEffect(Unit) {
@@ -201,6 +204,7 @@ class MainActivity : ComponentActivity() {
                     var size = 0
                     val buffer = ByteArray(2000)
                     try {
+                        stringBuilder = java.lang.StringBuilder()
                         size = inputStream!!.available()
                         if (size > 0) {
                             size = inputStream!!.read(buffer)
@@ -247,15 +251,15 @@ class MainActivity : ComponentActivity() {
             if(list.size > 1){
 
                 Log.d("TAG", "readScan: ${list[0]}   ${list[1]}")
-                var time = list[1]
+                var timeOrText = list[1]
 
 
                 //current date format
                 val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
 
-                val barcodeDate = dateFormat.parse(time)
-                val currentTime = Calendar.getInstance().time
-                val diffInMs: Long = currentTime.time - barcodeDate.time
+             //   val barcodeDate = dateFormat.parse(time)
+              //  val currentTime = Calendar.getInstance().time
+             //   val diffInMs: Long = currentTime.time - barcodeDate.time
 
                // val diffInSec: Long = TimeUnit.MILLISECONDS.toSeconds(diffInMs)
 
@@ -265,9 +269,18 @@ class MainActivity : ComponentActivity() {
                //     viewModel?.setErrorMessageToMainScreen("Qr Code is Expired! Please Generate Again and try again")
             //    }else{
                 //    Log.d("TAG", "onCreate:diif sec1 $diffInSec")
+            //    Toast.makeText(this,qrCode,Toast.LENGTH_LONG).show()
+                if(timeOrText.trim() == "sohpid"){
                     viewModel?.checkQrCode(list[0])
+                  //  viewModel?.setErrorMessageToMainScreen("updad")
+
+                }else{
+                    viewModel?.setErrorMessageToMainScreen("Wrong Qr Code, Only SOHP QRCode Allowed")
+                }
               //  }
 
+            }else{
+                viewModel?.setErrorMessageToMainScreen("Wrong Qr Code, Only SOHP QRCode Allowed.")
             }
         }
 
@@ -300,7 +313,8 @@ class MainActivity : ComponentActivity() {
                 serial = null
             }
             if (stringBuilder != null) {
-                stringBuilder = null
+
+                stringBuilder = java.lang.StringBuilder()
             }
         } catch (e: java.lang.Exception) {
             e.printStackTrace()

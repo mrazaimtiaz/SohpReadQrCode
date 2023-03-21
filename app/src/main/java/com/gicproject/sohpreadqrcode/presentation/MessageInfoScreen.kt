@@ -13,6 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -21,6 +23,7 @@ import androidx.navigation.NavController
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
+import com.gicproject.sohpreadqrcode.R
 import com.gicproject.sohpreadqrcode.Screen
 import com.gicproject.sohpreadqrcode.common.Constants.Companion.doneJson
 import com.gicproject.sohpreadqrcode.common.Constants.Companion.errorJson
@@ -70,6 +73,7 @@ fun MessageInfoScreen(
                     Text(
                          message ?: "",
                         color = if(isSuccess == true) darkGreen else redTable,
+                        fontFamily = FontFamily(Font(R.font.ge_bold)),
                         textAlign = TextAlign.Center,
                         fontSize = 22.sp
                     )

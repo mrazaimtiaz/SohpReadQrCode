@@ -4,6 +4,7 @@ class Constants {
     companion object {
         //http://gickuwait-dev.com/sohp_api/api/scanapp?appid=99999999
         const val BASE_URL = "http://gickuwait-dev.com/sohp_api/"
+
        // const val BASE_URL = "http://195.226.246.65:1040/"
        val SECRETKEY: String? = "jCXumGJZnSfsr1HiZ06Czg=="
        // const val BASE_URL = "http://gickuwait-dev.com/SalamScreenAPI/"

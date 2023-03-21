@@ -21,6 +21,8 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -137,6 +139,7 @@ fun MainScreen(
                         Text(
                             text = "Please Scan a QR code",
                             textAlign = TextAlign.Center,
+                            fontFamily = FontFamily(Font(R.font.ge_bold)),
                             color = MaterialTheme.colors.primary, fontSize = 25.sp,
                             fontWeight = FontWeight.Bold
                         )
@@ -160,6 +163,7 @@ fun MainScreen(
                         Text(
                             text = "يرجى مسح رمز الاستجابة السريعة ضوئيًا",
                             textAlign = TextAlign.Center,
+                            fontFamily = FontFamily(Font(R.font.ge_bold)),
                             color = MaterialTheme.colors.primary, fontSize = 25.sp,
                             fontWeight = FontWeight.Bold
                         )
