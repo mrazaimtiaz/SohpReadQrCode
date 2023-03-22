@@ -4,7 +4,6 @@ package com.gicproject.sohpreadqrcode.data.repository
 import android.util.ArrayMap
 import android.util.Log
 import com.gicproject.sohpreadqrcode.data.remote.MyApi
-import com.gicproject.sohpreadqrcode.data.remote.dto.*
 import com.gicproject.sohpreadqrcode.domain.model.*
 import com.gicproject.sohpreadqrcode.domain.repository.MyRepository
 import kotlinx.coroutines.flow.Flow
@@ -20,6 +19,9 @@ class MyRepositoryImpl @Inject constructor(
 ): MyRepository {
 
 
+    override suspend fun getPatientInfo(appId: String): List<PatientInfo>? {
+        return api.GetAppointmentID(appId)
+    }
 
     override suspend fun checkQrCode(appId: String): List<ResultClass>? {
         return api.checkQrCode(appId)

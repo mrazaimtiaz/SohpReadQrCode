@@ -11,4 +11,9 @@ interface MyApi {
         @Query("appid") appid: String
     ): List<ResultClass>?
 
+    @GET("api/GetAppointmentID")
+    suspend fun GetAppointmentID(
+        @Query("id") appid: String
+    ): List<PatientInfo>?
+
 }

@@ -27,18 +27,18 @@ import com.gicproject.sohpreadqrcode.R
 import com.gicproject.sohpreadqrcode.Screen
 import com.gicproject.sohpreadqrcode.common.Constants.Companion.doneJson
 import com.gicproject.sohpreadqrcode.common.Constants.Companion.errorJson
+import com.gicproject.sohpreadqrcode.domain.model.PatientInfo
 import com.gicproject.sohpreadqrcode.ui.theme.darkGreen
 import com.gicproject.sohpreadqrcode.ui.theme.redTable
 import kotlinx.coroutines.delay
-import java.text.SimpleDateFormat
-import java.util.*
 
 @Composable
 fun MessageInfoScreen(
     navController: NavController,
     viewModel: MyViewModel,
-    isSuccess:Boolean?,
+    isSuccess: Boolean?,
     message: String?,
+    patientInfo: PatientInfo?,
 ) {
 
 
@@ -85,12 +85,32 @@ fun MessageInfoScreen(
                         ErrorAnimation()
                     }
                 }
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.padding(10.dp)
+                ) {
+                    Spacer(Modifier.height(10.dp))
+                    TextInfo("Name: ", patientInfo?.Name?.toString() ?: "")
+                    Spacer(Modifier.height(10.dp))
+                    TextInfo("Civil ID: ", patientInfo?.CivilID ?: "")
+                    Spacer(Modifier.height(10.dp))
+                    TextInfo("Appointment Time: ", patientInfo?.Time ?: "")
+               //     Spacer(Modifier.height(10.dp))
+                    //  TextInfo("Designation: ", employeeInfo?.departmentEn ?: "")
+                    //   Spacer(Modifier.height(10.dp))
+                    // variable for simple date format.
+
+                 //   TextInfo("CheckIn Time: ", " $currentDateAndTime")
+                }
+
+            }
 
             }
         }
 
     }
-}
+
 
 @Composable
 fun ErrorAnimation() {

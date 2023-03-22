@@ -13,7 +13,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gicproject.sohpreadqrcode.common.Constants.Companion.KEY_DEVICE_ID
+import com.gicproject.sohpreadqrcode.common.Constants.Companion.sohpBaseImage
 import com.gicproject.sohpreadqrcode.common.Resource
+import com.gicproject.sohpreadqrcode.common.toBitmap
+import com.gicproject.sohpreadqrcode.domain.model.PatientInfo
 import com.gicproject.sohpreadqrcode.domain.repository.DataStoreRepository
 import com.gicproject.sohpreadqrcode.domain.use_case.MyUseCases
 import com.telpo.tps550.api.printer.UsbThermalPrinter
@@ -154,12 +157,12 @@ class MyViewModel @Inject constructor(
         mPrinter = printer
         mContext = context
     }
-
-    fun funcPrinterImage(bitmap: Bitmap) {
+//bitmap: Bitmap,
+    fun funcPrinterImage(patientInfo: PatientInfo?) {
         CoroutineScope(Dispatchers.IO).launch {
             Log.d(TAG, "funcPrinterImage: called ")
 
-
+            var bitmap= sohpBaseImage.toBitmap()
             //  io = UsbNativeAPI()
 
 
@@ -174,6 +177,7 @@ class MyViewModel @Inject constructor(
                 // mPrinter!!.printFeed()
                 val cx = bitmap.width / 2f
                 val cy = bitmap.height / 2f
+               bitmap = Bitmap.createScaledBitmap(bitmap, 80, 80, false)
                 //   val bitmap90 =  bitmap.rotate(90f)
                 //  val bitmap180 =  bitmap.rotate(180f)
 
@@ -189,8 +193,20 @@ class MyViewModel @Inject constructor(
 
                         //mPrinter?.setGray(5)
 
-
                         mPrinter?.printLogo(bitmap,false)
+                            mPrinter?.setTextSize(25)
+                        mPrinter?.addString(
+                            """CivilID: ${patientInfo?.CivilID} """.trimIndent()
+                        )
+                        mPrinter?.addString(
+                                """Name: ${patientInfo?.Name} """.trimIndent()
+                                )
+                        mPrinter?.addString(
+                            """Appointment Date: ${patientInfo?.SDate} """.trimIndent()
+                        )
+                        mPrinter?.addString(
+                            """Appointment Time: ${patientInfo?.Time} """.trimIndent()
+                        )
                       //  mPrinter?.paperCut()
 
                        /* val picturePath =
@@ -296,6 +312,16 @@ class MyViewModel @Inject constructor(
 
         return encImage;
     }
+
+    fun testCase(patientInfo: PatientInfo?){
+        funcPrinterImage( patientInfo)
+        //      bitmap = service.ServicesLogo!!.toBitmap().asImageBitmap()
+        _stateMain.value = _stateMain.value.copy(
+            isLoading = false,
+            success =  "Thank You So Much. Please Wait For your turn",
+            patientInfo = patientInfo,
+        )
+    }
     fun onEvent(event: MyEvent) {
 
         when (event) {
@@ -312,10 +338,12 @@ class MyViewModel @Inject constructor(
                                     Log.d(TAG, "onEvent: getCheckQrCode success")
                                     viewModelScope.launch {
                                         delay(100)
+                                        funcPrinterImage( it.patientInfo)
                                         //      bitmap = service.ServicesLogo!!.toBitmap().asImageBitmap()
                                         _stateMain.value = _stateMain.value.copy(
                                             isLoading = false,
-                                            success = it.Message ?: "Empty Message"
+                                            success = it.resultClass?.Message ?: "Empty Message",
+                                            patientInfo = it.patientInfo,
                                         )
 
                                     }

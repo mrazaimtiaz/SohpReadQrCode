@@ -26,6 +26,7 @@ import com.gicproject.sohpreadqrcode.R
 import com.gicproject.sohpreadqrcode.Screen
 import com.gicproject.sohpreadqrcode.common.Constants
 import com.gicproject.sohpreadqrcode.common.toBitmap
+import com.gicproject.sohpreadqrcode.domain.model.PatientInfo
 
 @Composable
 fun SettingScreen(
@@ -77,7 +78,9 @@ fun SettingScreen(
                 ) {
                     Button(onClick = {
 //viewModel.funcPrinterConnect("test print")
-                        viewModel.funcPrinterImage(Constants.baseImage.toBitmap())
+                        //Constants.baseImage.toBitmap(),null
+                        viewModel.testCase(patientInfo =PatientInfo("EA794A2A-0C2F-40CC-BED8-98C89BECEF85","104553","test gic test","84B42E25-7C3F-4B4F-A6AF-D1D7A6B0EC28","Jaber H","1","Active","21/03/2023","11:00 - 11:45","11:00 AM",0,"312052594333") )
+                       // viewModel.funcPrinterImage(patientInfo = PatientInfo("EA794A2A-0C2F-40CC-BED8-98C89BECEF85","104553","test gic test","84B42E25-7C3F-4B4F-A6AF-D1D7A6B0EC28","Jaber H","1","Active","21/03/2023","11:00 - 11:45","11:00 AM",0,"312052594333"))
                         }) {
                         Text("print test")
                     }

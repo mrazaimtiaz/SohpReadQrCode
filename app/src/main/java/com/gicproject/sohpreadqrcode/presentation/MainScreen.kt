@@ -68,6 +68,9 @@ fun MainScreen(
             navController.currentBackStackEntry?.savedStateHandle?.set(
                 Constants.STATE_MSG, state.success
             )
+            navController.currentBackStackEntry?.savedStateHandle?.set(
+                Constants.STATE_PATIENT_INFO, state.patientInfo
+            )
            navController.navigate(Screen.MessageInfoScreen.route)
       }
     }
