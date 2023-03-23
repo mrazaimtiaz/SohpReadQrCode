@@ -2,20 +2,16 @@ package com.gicproject.sohpreadqrcode.presentation
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.media.AudioManager
 import android.media.ToneGenerator
 import android.net.Uri
-import android.os.Environment
 import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gicproject.sohpreadqrcode.common.Constants.Companion.KEY_DEVICE_ID
-import com.gicproject.sohpreadqrcode.common.Constants.Companion.sohpBaseImage
 import com.gicproject.sohpreadqrcode.common.Resource
-import com.gicproject.sohpreadqrcode.common.toBitmap
 import com.gicproject.sohpreadqrcode.domain.model.PatientInfo
 import com.gicproject.sohpreadqrcode.domain.repository.DataStoreRepository
 import com.gicproject.sohpreadqrcode.domain.use_case.MyUseCases
@@ -25,9 +21,9 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import java.io.ByteArrayOutputStream
-import java.io.File
 import java.io.IOException
 import java.io.InputStream
+import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
@@ -158,12 +154,23 @@ class MyViewModel @Inject constructor(
         mContext = context
     }
 //bitmap: Bitmap,
+
+    private var bitmapLogo: Bitmap? = null
+    fun setBitmapLogo(bitmap: Bitmap?){
+        bitmapLogo  = bitmap
+    }
     fun funcPrinterImage(patientInfo: PatientInfo?) {
         CoroutineScope(Dispatchers.IO).launch {
             Log.d(TAG, "funcPrinterImage: called ")
 
-            var bitmap= sohpBaseImage.toBitmap()
+           // var bitmap= sohpBaseImage.toBitmap()
+            var bitmap = bitmapLogo
             //  io = UsbNativeAPI()
+            val currentDate: String =
+                SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(Date())
+
+            val currentTime = SimpleDateFormat("HH:mm a", Locale.getDefault()).format(Date())
+
 
 
 
@@ -175,9 +182,12 @@ class MyViewModel @Inject constructor(
 
                 //   mPrinter!!.printString("Picture test printing:\n")
                 // mPrinter!!.printFeed()
-                val cx = bitmap.width / 2f
-                val cy = bitmap.height / 2f
-               bitmap = Bitmap.createScaledBitmap(bitmap, 80, 80, false)
+                if(bitmap != null){
+                    val cx = bitmap.width / 2f
+                    val cy = bitmap.height / 2f
+                    bitmap = Bitmap.createScaledBitmap(bitmap, 190, 160, false)
+
+                }
                 //   val bitmap90 =  bitmap.rotate(90f)
                 //  val bitmap180 =  bitmap.rotate(180f)
 
@@ -189,24 +199,48 @@ class MyViewModel @Inject constructor(
 
                     try {
                         mPrinter?.reset()
-                        mPrinter?.setAlgin(UsbThermalPrinter.ALGIN_MIDDLE)
 
                         //mPrinter?.setGray(5)
+                        mPrinter?.setAlgin(UsbThermalPrinter.ALGIN_RIGHT)
+                        mPrinter?.setTextSize(20)
+                        mPrinter?.addString(
+                            currentDate
+                        )
+                        mPrinter?.addString(
+                            currentTime
+                        )
+
+                        mPrinter?.printString()
+                        mPrinter?.setAlgin(UsbThermalPrinter.ALGIN_MIDDLE)
 
                         mPrinter?.printLogo(bitmap,false)
                             mPrinter?.setTextSize(25)
+                        mPrinter?.walkPaper(4)
+                        mPrinter?.setAlgin(UsbThermalPrinter.ALGIN_MIDDLE)
                         mPrinter?.addString(
-                            """CivilID: ${patientInfo?.CivilID} """.trimIndent()
+                            """Civil ID: ${patientInfo?.CivilID}"""
                         )
+
+                        mPrinter?.printString()
+                        mPrinter?.walkPaper(1)
                         mPrinter?.addString(
-                                """Name: ${patientInfo?.Name} """.trimIndent()
+                                """Name: ${patientInfo?.Name}"""
                                 )
+                        mPrinter?.printString()
+                        mPrinter?.walkPaper(1)
                         mPrinter?.addString(
-                            """Appointment Date: ${patientInfo?.SDate} """.trimIndent()
+                            """Appointment Date: ${patientInfo?.SDate}"""
                         )
+                        mPrinter?.printString()
+                        mPrinter?.walkPaper(1)
                         mPrinter?.addString(
-                            """Appointment Time: ${patientInfo?.Time} """.trimIndent()
+                            """Appointment Time: ${patientInfo?.TimeAmPm}"""
                         )
+                        mPrinter?.printString()
+                        mPrinter?.walkPaper(1)
+
+                        mPrinter?.printString()
+                        mPrinter?.walkPaper(20)
                       //  mPrinter?.paperCut()
 
                        /* val picturePath =

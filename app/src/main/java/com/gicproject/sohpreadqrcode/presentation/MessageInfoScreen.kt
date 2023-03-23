@@ -95,6 +95,8 @@ fun MessageInfoScreen(
                     Spacer(Modifier.height(10.dp))
                     TextInfo("Civil ID: ", patientInfo?.CivilID ?: "")
                     Spacer(Modifier.height(10.dp))
+                    TextInfo("Appointment Date: ", patientInfo?.SDate ?: "")
+                    Spacer(Modifier.height(10.dp))
                     TextInfo("Appointment Time: ", patientInfo?.Time ?: "")
                //     Spacer(Modifier.height(10.dp))
                     //  TextInfo("Designation: ", employeeInfo?.departmentEn ?: "")

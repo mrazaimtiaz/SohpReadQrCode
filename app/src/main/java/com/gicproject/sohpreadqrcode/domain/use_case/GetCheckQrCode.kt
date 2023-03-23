@@ -20,6 +20,19 @@ class GetCheckQrCode @Inject constructor(
     operator fun invoke(appId: String): Flow<Resource<ResultClassAndPatientInfo>> = flow {
         try {
             emit(Resource.Loading())
+
+            //testing
+            /*val patientInfo = repository.getPatientInfo(appId = appId)
+            if(patientInfo.isNullOrEmpty()){
+                emit(Resource.Error("Patient List Empty"))
+            }else{
+                emit(Resource.Success(ResultClassAndPatientInfo(ResultClass("Thank You So Much. Please Wait For your turn"),
+                    patientInfo[0]
+                )))
+            }*/
+
+
+
             val result = repository.checkQrCode(appId = appId)
             if(!result.isNullOrEmpty()){
 

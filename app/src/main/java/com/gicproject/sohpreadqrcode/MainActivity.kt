@@ -1,7 +1,9 @@
 package com.gicproject.sohpreadqrcode
 
+import android.R
 import android.app.ProgressDialog
 import android.content.*
+import android.graphics.BitmapFactory
 import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbManager
 import android.os.BatteryManager
@@ -13,8 +15,10 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
+import androidx.core.graphics.drawable.toBitmap
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -98,6 +102,8 @@ class MainActivity : ComponentActivity() {
         initSerial("/dev/ttyACM0")
         stringBuilder = java.lang.StringBuilder()
 
+       var bitmapLogo = AppCompatResources.getDrawable(
+            this,com.gicproject.sohpreadqrcode.R.drawable.sohparlogowhitebg)?.toBitmap(width = 130, height = 130)
 
 
 
@@ -113,6 +119,7 @@ class MainActivity : ComponentActivity() {
 
 
 
+
             if (mUsbBroadCastReceiver == null) {
                 val intentFilter = IntentFilter()
                 intentFilter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED)
@@ -125,6 +132,9 @@ class MainActivity : ComponentActivity() {
 
             val darkTheme = viewModel!!.isDarkTheme.value
             val systemUiController = rememberSystemUiController()
+
+
+            viewModel?.setBitmapLogo(bitmapLogo)
 
            /* LaunchedEffect(Unit) {
                 while (true) {
@@ -262,6 +272,7 @@ class MainActivity : ComponentActivity() {
             var list =   qrCode.split("-----")
 
              //   viewModel?.funcPrinterImage(Constants.baseImage.toBitmap())
+          //  viewModel?.testCase(patientInfo =PatientInfo("EA794A2A-0C2F-40CC-BED8-98C89BECEF85","104553","test gic test","84B42E25-7C3F-4B4F-A6AF-D1D7A6B0EC28","Jaber H","1","Active","21/03/2023","11:00 - 11:45","11:00 AM",0,"312052594333") )
 
 
             if(list.size > 1){
@@ -292,12 +303,12 @@ class MainActivity : ComponentActivity() {
                   //  viewModel?.setErrorMessageToMainScreen("updad")
 
                 }else{
-                    viewModel?.setErrorMessageToMainScreen("Wrong Qr Code, Only SOHP QRCode Allowed")
+                   viewModel?.setErrorMessageToMainScreen("Wrong Qr Code, Only SOHP QRCode Allowed")
                 }
               //  }
 
             }else{
-                viewModel?.setErrorMessageToMainScreen("Wrong Qr Code, Only SOHP QRCode Allowed.")
+               viewModel?.setErrorMessageToMainScreen("Wrong Qr Code, Only SOHP QRCode Allowed.")
             }
         }
 
@@ -379,11 +390,11 @@ class MainActivity : ComponentActivity() {
                 } else {
                     dialog!!.dismiss()
                     CoroutineScope(Dispatchers.Main).launch {
-                        Toast.makeText(
+                    /*    Toast.makeText(
                             this@MainActivity,
                             "Operation print fail",
                             Toast.LENGTH_LONG
-                        ).show()
+                        ).show()*/
                     }
 
                 }
