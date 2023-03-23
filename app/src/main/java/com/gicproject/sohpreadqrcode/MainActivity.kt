@@ -331,7 +331,7 @@ class MainActivity : ComponentActivity() {
         super.onStop()
         unregisterReceiver(printReceive)
        mUsbThermalPrinter?.stop()
-        try {
+        /*try {
             if (inputStream != null) {
                 inputStream!!.close()
                 inputStream = null
@@ -346,7 +346,7 @@ class MainActivity : ComponentActivity() {
             }
         } catch (e: java.lang.Exception) {
             e.printStackTrace()
-        }
+        }*/
     }
 
     var dialog: ProgressDialog? = null
