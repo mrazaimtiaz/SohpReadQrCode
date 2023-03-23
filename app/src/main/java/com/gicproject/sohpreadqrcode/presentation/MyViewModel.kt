@@ -272,13 +272,12 @@ class MyViewModel @Inject constructor(
             } catch (e: java.lang.Exception) {
                 e.printStackTrace()
 
-              var  result = e.toString()
-                if (result == "com.common.print.error.NoPaperException") {
+                if ( e.toString() == "com.common.print.error.NoPaperException") {
                     setErrorMessageToMainScreen("No Paper")
-                } else if (result == "com.common.print.error.OverHeatException") {
+                } else if (e.toString() == "com.common.print.error.OverHeatException") {
                     setErrorMessageToMainScreen("Overheat")
                 } else {
-                    setErrorMessageToMainScreen("Error: $result")
+                    setErrorMessageToMainScreen("Error: ${e.toString()}")
                 }
             }
         }
