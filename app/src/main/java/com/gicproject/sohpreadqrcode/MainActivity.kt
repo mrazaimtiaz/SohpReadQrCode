@@ -221,6 +221,7 @@ class MainActivity : ComponentActivity() {
         var context = this
         CoroutineScope(Dispatchers.IO).launch {
             while (flag){
+                Log.d("TAG", "readScan: reading")
                 delay(500)
                 if (inputStream != null) {
                     var size = 0
@@ -329,8 +330,8 @@ class MainActivity : ComponentActivity() {
 
     override fun onStop() {
         super.onStop()
-        unregisterReceiver(printReceive)
-       mUsbThermalPrinter?.stop()
+      //  unregisterReceiver(printReceive)
+      // mUsbThermalPrinter?.stop()
         /*try {
             if (inputStream != null) {
                 inputStream!!.close()
