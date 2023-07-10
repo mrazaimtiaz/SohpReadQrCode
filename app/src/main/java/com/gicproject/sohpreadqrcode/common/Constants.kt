@@ -7,8 +7,8 @@ import android.util.Base64
 class Constants {
     companion object {
       //  const val BASE_URL = "http://gickuwait-dev.com/sohp_api/"
-
-        const val BASE_URL = "http://195.226.246.65:1040/"
+   //   const val BASE_URL = "http://192.168.0.11:1040/" // hawally branch
+       const val BASE_URL = "http://195.226.246.65:1040/"
        val SECRETKEY: String? = "jCXumGJZnSfsr1HiZ06Czg=="
        // const val BASE_URL = "http://gickuwait-dev.com/SalamScreenAPI/"
         const val KEY_AUTO_DETECT_CARD = "auto detect card"
